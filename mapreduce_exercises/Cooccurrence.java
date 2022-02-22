@@ -97,6 +97,11 @@ public class Cooccurrence {
             for (int i = 0; i < tokens.length - 1; i++) {
                 String first = tokens[i];
                 String second = tokens[i + 1];
+				
+				Pair tokenTerm = new Pair(first, second);
+				
+				Pair marginalTerm = new Pair(first, MARGINAL);
+				
 
                 // TODO: output the correct key-value pairs
                 // (Hint: you need to output TWO separate pairs)
