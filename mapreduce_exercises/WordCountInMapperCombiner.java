@@ -28,7 +28,7 @@ public class WordCountInMapperCombiner {
                 throws IOException, InterruptedException {
             String[] tokens = value.toString().split("\\s");
             for (String token : tokens) {
-                // TODO: store token in countMap
+                countMap.increment(token);
             }
         }
 
@@ -38,7 +38,10 @@ public class WordCountInMapperCombiner {
             for (Map.Entry<String, Integer> entry : countMap.entrySet()) {
                 String key = entry.getKey();
                 int value = entry.getValue();
-                // TODO: output all values in countMap
+				
+                WORD.set(key);
+				COUNT.set(value);
+                context.write(WORD, COUNT);
             }
         }
 
