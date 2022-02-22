@@ -121,10 +121,19 @@ public class Cooccurrence {
         @Override
         public void reduce(StringPair key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
+					
+			//marginalTerm
             if (MARGINAL.equals(key.getSecond())) {
                 // TODO: compute and update marginal count
+				
+			//tokenTerm
             } else {
                 float total = 0; // Use float instead of int, because we perform division
+				for (IntWritable value : values) {
+					total += value.get();
+				}
+				RESULT.set(total /  marginalCount.get());
+				context.write(key, RESULT);
                 // TODO: compute and output relative frequency
             }
         }
