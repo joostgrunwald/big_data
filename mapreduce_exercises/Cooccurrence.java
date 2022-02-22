@@ -99,12 +99,15 @@ public class Cooccurrence {
                 String second = tokens[i + 1];
 				
 				Pair tokenTerm = new Pair(first, second);
-				
 				Pair marginalTerm = new Pair(first, MARGINAL);
 				
-
-                // TODO: output the correct key-value pairs
-                // (Hint: you need to output TWO separate pairs)
+				
+				PAIR.set(tokenTerm);
+				context.write(PAIR, ONE);
+				
+				PAIR.set(marginalTerm);
+				context.write(PAIR, ONE);
+				
             }
         }
     }
