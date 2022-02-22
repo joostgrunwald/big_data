@@ -52,15 +52,15 @@ public class Cooccurrence {
                 boolean otherMarginal = MARGINAL.equals(other.second.toString());
 
                 if (isMarginal && otherMarginal) {
-                    // TODO: which value should we return here?
+                    return 0;
                 } else if (isMarginal) {
-                    // TODO: which value should we return here?
+					return -1;
                 } else if (otherMarginal) {
-                    // TODO: which value should we return here?
+                    return 1;
                 }
-                // TODO: which value should we return here?
+				return this.second.compareTo(other.second);
             } else {
-                // TODO: which value should we return here?
+				return firstcompare;
             }
         }
 
