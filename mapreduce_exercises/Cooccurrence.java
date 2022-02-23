@@ -134,7 +134,14 @@ public class Cooccurrence {
 					marginalCount += total;	
 				}
 				else {
+					WordUsed.set(key.getFirst());
+					marginalCount = 0;
 					
+					float total = 0; 
+					for (IntWritable value : values) {
+						total += value.get();
+					}
+					marginalCount = total;
 				}
                 // TODO: compute and update marginal count
 				
