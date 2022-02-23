@@ -163,7 +163,8 @@ public class Cooccurrence {
 
         @Override
         public int getPartition(StringPair key, IntWritable value, int numReduceTasks) {
-            // TODO: partition the pairs by the first part of the key only
+            return StringPair.getFirst().hashCode() & numReduceTasks;
+			i
         }
     }
 
