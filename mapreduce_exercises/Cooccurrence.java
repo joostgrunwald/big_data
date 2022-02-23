@@ -117,6 +117,7 @@ public class Cooccurrence {
 
         private static final FloatWritable RESULT = new FloatWritable();
         private int marginalCount = 0;
+		private Text WordUsed = new Text('EMPTY_TEXT');
 
         @Override
         public void reduce(StringPair key, Iterable<IntWritable> values, Context context)
@@ -124,6 +125,17 @@ public class Cooccurrence {
 					
 			//marginalTerm
             if (MARGINAL.equals(key.getSecond())) {
+				if (key.getFirst.equals(WordUsed)){
+					//update marginalCount
+					float total = 0; 
+					for (IntWritable value : values) {
+						total += value.get();
+					}
+					marginalCount += total;	
+				}
+				else {
+					
+				}
                 // TODO: compute and update marginal count
 				
 			//tokenTerm
