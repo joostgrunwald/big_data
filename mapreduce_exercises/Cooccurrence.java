@@ -174,15 +174,15 @@ public class Cooccurrence {
         job.setJarByClass(Cooccurrence.class);
 
         // TODO: set classes for the components:
-        job.setMapperClass(???.class);
-        job.setReducerClass(???.class);
-        job.setPartitionerClass(???.class);
+        job.setMapperClass(CooccurrenceMapper.class);
+        job.setReducerClass(CooccurrenceReducer.class);
+        job.setPartitionerClass(PairsPartitioner.class);
 
         // TODO: set outputs of map and reduce tasks:
-        job.setMapOutputKeyClass(???.class);
-        job.setMapOutputValueClass(???.class);
-        job.setOutputKeyClass(???.class);
-        job.setOutputValueClass(???.class);
+        job.setMapOutputKeyClass(StringPair.class);
+        job.setMapOutputValueClass(IntWritable.class);
+        job.setOutputKeyClass(StringPair.class);
+        job.setOutputValueClass(FloatWritable.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
