@@ -98,14 +98,10 @@ public class Cooccurrence {
                 String first = tokens[i];
                 String second = tokens[i + 1];
 				
-				Pair tokenTerm = new Pair(first, second);
-				Pair marginalTerm = new Pair(first, MARGINAL);
-				
-				
-				PAIR.set(tokenTerm);
+				PAIR.set(first, second);
 				context.write(PAIR, ONE);
 				
-				PAIR.set(marginalTerm);
+				PAIR.set(first, MARGINAL);
 				context.write(PAIR, ONE);
 				
             }
@@ -117,7 +113,7 @@ public class Cooccurrence {
 
         private static final FloatWritable RESULT = new FloatWritable();
         private int marginalCount = 0;
-		private Text WordUsed = new Text('EMPTY_TEXT');
+		private Text wordUsed = new Text('EMPTY_TEXT');
 
         @Override
         public void reduce(StringPair key, Iterable<IntWritable> values, Context context)
@@ -125,7 +121,7 @@ public class Cooccurrence {
 					
 			//marginalTerm
             if (MARGINAL.equals(key.getSecond())) {
-				if (key.getFirst.equals(WordUsed)){
+				if (key.getFirst().equals(wordUsed)){
 					//update marginalCount
 					float total = 0; 
 					for (IntWritable value : values) {
@@ -134,7 +130,7 @@ public class Cooccurrence {
 					marginalCount += total;	
 				}
 				else {
-					WordUsed.set(key.getFirst());
+					wordUsed.set(key.getFirst());
 					marginalCount = 0;
 					
 					float total = 0; 
@@ -164,7 +160,6 @@ public class Cooccurrence {
         @Override
         public int getPartition(StringPair key, IntWritable value, int numReduceTasks) {
             return StringPair.getFirst().hashCode() & numReduceTasks;
-			i
         }
     }
 
