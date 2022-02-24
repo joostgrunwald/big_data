@@ -60,7 +60,7 @@ public class Cooccurrence {
                 }
 				return this.second.compareTo(other.second);
             } else {
-				return firstcompare;
+				return firstCompare;
             }
         }
 
@@ -123,7 +123,7 @@ public class Cooccurrence {
             if (MARGINAL.equals(key.getSecond())) {
 				if (key.getFirst().equals(wordUsed)){
 					//update marginalCount
-					float total = 0; 
+					int total = 0; 
 					for (IntWritable value : values) {
 						total += value.get();
 					}
@@ -133,7 +133,7 @@ public class Cooccurrence {
 					wordUsed.set(key.getFirst());
 					marginalCount = 0;
 					
-					float total = 0; 
+					int total = 0; 
 					for (IntWritable value : values) {
 						total += value.get();
 					}
