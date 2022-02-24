@@ -147,7 +147,7 @@ public class Cooccurrence {
 				for (IntWritable value : values) {
 					total += value.get();
 				}
-				RESULT.set(total /  marginalCount.get());
+				RESULT.set(total /  marginalCount);
 				context.write(key, RESULT);
                 // TODO: compute and output relative frequency
             }
@@ -159,7 +159,7 @@ public class Cooccurrence {
 
         @Override
         public int getPartition(StringPair key, IntWritable value, int numReduceTasks) {
-            return StringPair.getFirst().hashCode() & numReduceTasks;
+            return key.getFirst().hashCode() & numReduceTasks;
         }
     }
 
