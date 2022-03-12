@@ -1,0 +1,2253 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n# Big Data: Spark RDDs (exercises)\nObjectives:\n* Show the basic understanding of (creating) RDDs\n* Get to know what happens with partitions and partitioners in Spark\n* Work with the Shakespeare Data",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h1>Big Data: Spark RDDs (exercises)</h1>\n<p>Objectives:</p>\n<ul>\n<li>Show the basic understanding of (creating) RDDs</li>\n<li>Get to know what happens with partitions and partitioners in Spark</li>\n<li>Work with the Shakespeare Data</li>\n</ul>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_2073053927",
+      "id": "20210323-214017_1217973860",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:15674"
+    },
+    {
+      "text": "%spark\n// Sanity check for Spark and Scala\nprintf(\"Spark %s\\nScala %s\", sc.version, util.Properties.versionString)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:51:20+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Spark 3.1.1\nScala version 2.12.10"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_1426614799",
+      "id": "paragraph_1631794243863_294069186",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T11:51:20+0000",
+      "dateFinished": "2022-03-11T11:51:20+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15675"
+    },
+    {
+      "text": "%md\n## Exercise 1.1\nCheck the Spark RDD programming guide,\n\n* https://spark.apache.org/docs/3.1.1/rdd-programming-guide.html\n\nand answer the following questions (in 1-3 sentences):\n\na. What is an RDD?\nAn RDD, short for Resilient Distributed Dataset, is an collection of elements that can b used in parallel.\nb. Explain the differences between transformations and actions.\nTransformations use an existing dataset to create a new dataset.\nActions return a value to the driver program after running a computation on the dataset.\nSource(documentation)\nc. Give two example transformations where shuffling the data is needed.\nrepartition()\nrepartitionandsortwithinpartitions()\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:42:44+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 1.1</h2>\n<p>Check the Spark RDD programming guide,</p>\n<ul>\n<li><a href=\"https://spark.apache.org/docs/3.1.1/rdd-programming-guide.html\">https://spark.apache.org/docs/3.1.1/rdd-programming-guide.html</a></li>\n</ul>\n<p>and answer the following questions (in 1-3 sentences):</p>\n<p>a. What is an RDD?<br />\nAn RDD, short for Resilient Distributed Dataset, is an collection of elements that can b used in parallel.<br />\nb. Explain the differences between transformations and actions.<br />\nTransformations use an existing dataset to create a new dataset.<br />\nActions return a value to the driver program after running a computation on the dataset.<br />\nSource(documentation)<br />\nc. Give two example transformations where shuffling the data is needed.<br />\nrepartition()<br />\nrepartitionandsortwithinpartitions()</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_1356236778",
+      "id": "paragraph_1638911853147_1545900617",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:42:44+0000",
+      "dateFinished": "2022-03-11T12:42:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15676"
+    },
+    {
+      "text": "%md\n## Exercise 1.2\na. Give the line of code for creating an RDD using the `parallelize()` operation with the numbers 0 to 799 in it. We want this RDD to be split up in 8 different partitions.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 1.2</h2>\n<p>a. Give the line of code for creating an RDD using the <code>parallelize()</code> operation with the numbers 0 to 799 in it. We want this RDD to be split up in 8 different partitions.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_1732141145",
+      "id": "paragraph_1631794220150_1011381899",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15677"
+    },
+    {
+      "text": "%spark\nval rdd = sc.parallelize(0 to 799,8)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:46:55+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mrdd\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[Int]\u001b[0m = ParallelCollectionRDD[49] at parallelize at <console>:27\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1157592210",
+      "id": "paragraph_1631794251921_1962384498",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:46:55+0000",
+      "dateFinished": "2022-03-11T12:46:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15678"
+    },
+    {
+      "text": "%md\nb. If we execute the line of code from answer a, what will happen?\nWe execute the spark code, initializing a new RDD from a collection of numbers. The second argument splits the data into 8 partitions. \nAn object ParallelCollectionRDD[49] is created.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:48:29+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>b. If we execute the line of code from answer a, what will happen?<br />\nWe execute the spark code, initializing a new RDD from a collection of numbers. The second argument splits the data into 8 partitions.<br />\nAn object ParallelCollectionRDD[49] is created.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1481744831",
+      "id": "paragraph_1644578073323_1894678196",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:48:29+0000",
+      "dateFinished": "2022-03-11T12:48:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15679"
+    },
+    {
+      "text": "%md\nWe now execute the following line of code:",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:48:49+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We now execute the following line of code:</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_2006110270",
+      "id": "paragraph_1631794274564_1276090416",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:48:49+0000",
+      "dateFinished": "2022-03-11T12:48:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15680"
+    },
+    {
+      "text": "%md\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:51:16+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1647003076077_1948033506",
+      "id": "paragraph_1647003076077_1948033506",
+      "dateCreated": "2022-03-11T12:51:16+0000",
+      "status": "READY",
+      "$$hashKey": "object:15681"
+    },
+    {
+      "text": "%spark\nval sample = rdd.takeSample(false,8)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:48:51+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34msample\u001b[0m: \u001b[1m\u001b[32mArray[Int]\u001b[0m = Array(100, 574, 572, 408, 648, 246, 716, 352)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=21",
+              "$$hashKey": "object:16493"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=22",
+              "$$hashKey": "object:16494"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1981422970",
+      "id": "paragraph_1631794284910_1878093945",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:48:51+0000",
+      "dateFinished": "2022-03-11T12:48:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15682"
+    },
+    {
+      "text": "%md\nc. What do the parameters ‘false’ and ‘8’ mean?\nd. After executing the code block above, look at the [stages](http://localhost:4040/stages/). Why did Spark fire off eight different tasks?\ne. (optional/advanced) Why would Spark create two jobs to take the sample? _Hint: read the [code on takeSample()](https://github.com/apache/spark/blob/1d550c4e90275ab418b9161925049239227f3dc9/core/src/main/scala/org/apache/spark/rdd/RDD.scala#L620)._",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>c. What do the parameters ‘false’ and ‘8’ mean?<br />\nd. After executing the code block above, look at the <a href=\"http://localhost:4040/stages/\">stages</a>. Why did Spark fire off eight different tasks?<br />\ne. (optional/advanced) Why would Spark create two jobs to take the sample? <em>Hint: read the <a href=\"https://github.com/apache/spark/blob/1d550c4e90275ab418b9161925049239227f3dc9/core/src/main/scala/org/apache/spark/rdd/RDD.scala#L620\">code on takeSample()</a>.</em></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1535384873",
+      "id": "paragraph_1631794296169_1420267951",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15683"
+    },
+    {
+      "text": "%md \n## Exercise 1.3\n(In one or a couple of sentences:)\na. Describe what the functions `flatmap()` and `map()` do and its differences.\nb. Describe what the functions `take()` and `collect()` do and what can be hazardous in using `collect()`.\nc. Describe what `cache()` does and what can be hazardous about it.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 1.3</h2>\n<p>(In one or a couple of sentences:)<br />\na. Describe what the functions <code>flatmap()</code> and <code>map()</code> do and its differences.<br />\nb. Describe what the functions <code>take()</code> and <code>collect()</code> do and what can be hazardous in using <code>collect()</code>.<br />\nc. Describe what <code>cache()</code> does and what can be hazardous about it.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1414283988",
+      "id": "paragraph_1631794330892_289632298",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15684"
+    },
+    {
+      "text": "%md\n## Exercise 2.1\na. For each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 2.1</h2>\n<p>a. For each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1885997607",
+      "id": "paragraph_1631197722812_724425735",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15685"
+    },
+    {
+      "text": "%spark\nval A = sc.parallelize(0 to 999,8)\nA.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:40:22+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Number of partitions: 8\n\u001b[1m\u001b[34mA\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[Int]\u001b[0m = ParallelCollectionRDD[62] at parallelize at <console>:31\n\u001b[1m\u001b[34mres33\u001b[0m: \u001b[1m\u001b[32mOption[org.apache.spark.Partitioner]\u001b[0m = None\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=38",
+              "$$hashKey": "object:16549"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_363191305",
+      "id": "20210323-214017_1526376678",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:18:52+0000",
+      "dateFinished": "2022-03-11T13:18:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15686"
+    },
+    {
+      "text": "%spark\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:20:38+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1647004838136_1514729432",
+      "id": "paragraph_1647004838136_1514729432",
+      "dateCreated": "2022-03-11T13:20:38+0000",
+      "status": "READY",
+      "$$hashKey": "object:15687"
+    },
+    {
+      "text": "%spark\nval B = A.map(x => (x % 100, 1000 - x))\nB.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:40:22+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mB\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[67] at map at <console>:33\n\u001b[1m\u001b[34mres38\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((0,1000), (1,999), (2,998), (3,997), (4,996), (5,995), (6,994), (7,993), (8,992), (9,991), (10,990), (11,989), (12,988), (13,987), (14,986), (15,985), (16,984), (17,983), (18,982), (19,981))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=44",
+              "$$hashKey": "object:16575"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_569050887",
+      "id": "20210323-214017_753817829",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:40:22+0000",
+      "dateFinished": "2022-03-11T13:40:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15688"
+    },
+    {
+      "text": "%spark\nval C = B.groupByKey()\nC.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:44:37+0000",
+      "progress": 11,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mC\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Iterable[Int])]\u001b[0m = ShuffledRDD[69] at groupByKey at <console>:35\n\u001b[1m\u001b[34mres40\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Iterable[Int])]\u001b[0m = Array((96,CompactBuffer(904, 804, 704, 604, 504, 404, 304, 204, 104, 4)), (56,CompactBuffer(944, 844, 744, 644, 544, 444, 344, 244, 144, 44)), (16,CompactBuffer(984, 884, 784, 684, 584, 484, 384, 284, 184, 84)), (80,CompactBuffer(920, 820, 720, 620, 520, 420, 320, 220, 120, 20)), (48,CompactBuffer(952, 852, 752, 652, 552, 452, 352, 252, 152, 52)), (32,CompactBuffer(968, 868, 768, 668, 568, 468, 368, 268, 168, 68)), (0,CompactBuffer(1000, 900, 800, 700, 600, 500, 400, 300, 200, 100)), (24,CompactBuffer(976, 876, 776, 676, 576, 476, 376, 276, 176, 76)), (64,CompactBuffer(936, 836, 736, 636, 536, 436, 336,...\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=46",
+              "$$hashKey": "object:16592"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=47",
+              "$$hashKey": "object:16593"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_1603927004",
+      "id": "20210323-214017_1628283214",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:44:37+0000",
+      "dateFinished": "2022-03-11T13:44:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15689"
+    },
+    {
+      "text": "%spark\nimport org.apache.spark.HashPartitioner\nval D = B.partitionBy(new HashPartitioner(2))\nD.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:45:41+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.HashPartitioner\n\u001b[1m\u001b[34mD\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = ShuffledRDD[70] at partitionBy at <console>:36\n\u001b[1m\u001b[34mres41\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((0,1000), (2,998), (4,996), (6,994), (8,992), (10,990), (12,988), (14,986), (16,984), (18,982), (20,980), (22,978), (24,976), (26,974), (28,972), (30,970), (32,968), (34,966), (36,964), (38,962))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=48",
+              "$$hashKey": "object:16612"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_905086178",
+      "id": "20210323-214017_1339820103",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:45:41+0000",
+      "dateFinished": "2022-03-11T13:45:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15690"
+    },
+    {
+      "text": "%spark\nval E = D.groupByKey()\nE.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:45:46+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mE\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Iterable[Int])]\u001b[0m = MapPartitionsRDD[71] at groupByKey at <console>:37\n\u001b[1m\u001b[34mres42\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Iterable[Int])]\u001b[0m = Array((34,CompactBuffer(966, 866, 766, 666, 566, 466, 366, 266, 166, 66)), (52,CompactBuffer(948, 848, 748, 648, 548, 448, 348, 248, 148, 48)), (96,CompactBuffer(904, 804, 704, 604, 504, 404, 304, 204, 104, 4)), (4,CompactBuffer(996, 896, 796, 696, 596, 496, 396, 296, 196, 96)), (16,CompactBuffer(984, 884, 784, 684, 584, 484, 384, 284, 184, 84)), (82,CompactBuffer(918, 818, 718, 618, 518, 418, 318, 218, 118, 18)), (66,CompactBuffer(934, 834, 734, 634, 534, 434, 334, 234, 134, 34)), (28,CompactBuffer(972, 872, 772, 672, 572, 472, 372, 272, 172, 72)), (54,CompactBuffer(946, 846, 746, 646, 546, 446, 3...\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=49",
+              "$$hashKey": "object:16629"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_842068103",
+      "id": "paragraph_1631198002576_655744250",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:45:46+0000",
+      "dateFinished": "2022-03-11T13:45:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15691"
+    },
+    {
+      "text": "%md\nb. Why does the `take()` of D retrieve different pairs than B?\nc. Explain why the keys are no longer in order in the `take()` of C and E.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>b. Why does the <code>take()</code> of D retrieve different pairs than B?<br />\nc. Explain why the keys are no longer in order in the <code>take()</code> of C and E.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_123077770",
+      "id": "paragraph_1638909440005_1799348093",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15692"
+    },
+    {
+      "text": "%md\n## Exercise 2.2\nFor each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 2.2</h2>\n<p>For each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_1604613399",
+      "id": "paragraph_1631202698099_1838796185",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15693"
+    },
+    {
+      "text": "%spark\nval F = C.map( {case(x,y) => (x, y.reduce((a,b) => a + b))} )\nF.take(20)\nprintf( \"Number of partitions: %d\\n\", F.partitions.length)\nF.partitioner\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:47:03+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Number of partitions: 8\n\u001b[1m\u001b[34mF\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[74] at map at <console>:37\n\u001b[1m\u001b[34mres45\u001b[0m: \u001b[1m\u001b[32mOption[org.apache.spark.Partitioner]\u001b[0m = None\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=53",
+              "$$hashKey": "object:16670"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=54",
+              "$$hashKey": "object:16671"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_1185334149",
+      "id": "20210323-214017_546452301",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:47:03+0000",
+      "dateFinished": "2022-03-11T13:47:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15694"
+    },
+    {
+      "text": "%spark\nval G = C.mapValues( y => y.reduce((a,b) => a + b))\nG.take(10)\nprintf( \"Number of partitions: %d\\n\", G.partitions.length)\nG.partitioner\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:47:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Number of partitions: 8\n\u001b[1m\u001b[34mG\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[75] at mapValues at <console>:37\n\u001b[1m\u001b[34mres46\u001b[0m: \u001b[1m\u001b[32mOption[org.apache.spark.Partitioner]\u001b[0m = Some(org.apache.spark.HashPartitioner@8)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=55",
+              "$$hashKey": "object:16690"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_1057493005",
+      "id": "paragraph_1638908693622_1541707331",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:47:40+0000",
+      "dateFinished": "2022-03-11T13:47:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15695"
+    },
+    {
+      "text": "%spark\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:01:37+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1647010897514_935933308",
+      "id": "paragraph_1647010897514_935933308",
+      "dateCreated": "2022-03-11T15:01:37+0000",
+      "status": "READY",
+      "$$hashKey": "object:15696"
+    },
+    {
+      "text": "%spark\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:02:49+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1647010969477_63723031",
+      "id": "paragraph_1647010969477_63723031",
+      "dateCreated": "2022-03-11T15:02:49+0000",
+      "status": "READY",
+      "$$hashKey": "object:15697"
+    },
+    {
+      "text": "%md\n## Exercise 2.3\na. Look up documentation of `repartition()` and `coalesce()` to find out what each of the functions does. Describe the differences. \nb. Take a look at the [Spark UI](http://localhost:4040) (after executing the cells below). Explain why the `takeSample()` of value I requires one shuffle phase less than H. ",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:57:36+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 2.3</h2>\n<p>a. Look up documentation of <code>repartition()</code> and <code>coalesce()</code> to find out what each of the functions does. Describe the differences.<br />\nb. Take a look at the <a href=\"http://localhost:4040\">Spark UI</a> (after executing the cells below). Explain why the <code>takeSample()</code> of value I requires one shuffle phase less than H.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_1394405325",
+      "id": "paragraph_1631197533979_69515493",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15698"
+    },
+    {
+      "text": "%spark\nval H = G.repartition(4)\nH.takeSample(true, 10)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:59:12+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mH\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[86] at repartition at <console>:37\n\u001b[1m\u001b[34mres51\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((99,4510), (11,5390), (28,5220), (77,4730), (95,4550), (55,4950), (65,4850), (52,4980), (57,4930), (27,5230))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=60",
+              "$$hashKey": "object:16737"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=61",
+              "$$hashKey": "object:16738"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_350497714",
+      "id": "20210323-214017_1632643197",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:59:12+0000",
+      "dateFinished": "2022-03-11T14:59:12+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15699"
+    },
+    {
+      "text": "%spark\nH.toDebugString",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:58:01+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres48\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m =\n(4) MapPartitionsRDD[79] at repartition at <console>:35 []\n |  CoalescedRDD[78] at repartition at <console>:35 []\n |  ShuffledRDD[77] at repartition at <console>:35 []\n +-(8) MapPartitionsRDD[76] at repartition at <console>:35 []\n    |  MapPartitionsRDD[75] at mapValues at <console>:37 []\n    |  ShuffledRDD[69] at groupByKey at <console>:35 []\n    +-(8) MapPartitionsRDD[67] at map at <console>:33 []\n       |  ParallelCollectionRDD[62] at parallelize at <console>:31 []\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_1179825659",
+      "id": "paragraph_1631199440086_136732456",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:58:01+0000",
+      "dateFinished": "2022-03-11T14:58:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15700"
+    },
+    {
+      "text": "%spark\nval I = G.coalesce(4)\nI.takeSample(true, 10)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:59:16+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mI\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = CoalescedRDD[88] at coalesce at <console>:37\n\u001b[1m\u001b[34mres52\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((42,5080), (37,5130), (35,5150), (56,4940), (98,4520), (32,5180), (83,4670), (18,5320), (34,5160), (52,4980))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=62",
+              "$$hashKey": "object:16771"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=63",
+              "$$hashKey": "object:16772"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_109325346",
+      "id": "20210323-214017_1102115685",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:59:16+0000",
+      "dateFinished": "2022-03-11T14:59:16+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15701"
+    },
+    {
+      "text": "%spark\nI.toDebugString",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:58:08+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres50\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m =\n(4) CoalescedRDD[81] at coalesce at <console>:35 []\n |  MapPartitionsRDD[75] at mapValues at <console>:37 []\n |  ShuffledRDD[69] at groupByKey at <console>:35 []\n +-(8) MapPartitionsRDD[67] at map at <console>:33 []\n    |  ParallelCollectionRDD[62] at parallelize at <console>:31 []\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1916095648",
+      "id": "paragraph_1631199441170_1752903184",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:58:08+0000",
+      "dateFinished": "2022-03-11T14:58:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15702"
+    },
+    {
+      "text": "%md\n## Exercise 3\nWe return to the Shakespeare data that we already saw in the reader.\na. Create `val lines`. _Hint: this is also done in the reader._",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 3</h2>\n<p>We return to the Shakespeare data that we already saw in the reader.<br />\na. Create <code>val lines</code>. <em>Hint: this is also done in the reader.</em></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1303638352",
+      "id": "paragraph_1631794513100_1892205778",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15703"
+    },
+    {
+      "text": "%md\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:14:03+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1647011643749_2073770515",
+      "id": "paragraph_1647011643749_2073770515",
+      "dateCreated": "2022-03-11T15:14:03+0000",
+      "status": "READY",
+      "$$hashKey": "object:15704"
+    },
+    {
+      "text": "%md\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:14:05+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1647011645507_1558377260",
+      "id": "paragraph_1647011645507_1558377260",
+      "dateCreated": "2022-03-11T15:14:05+0000",
+      "status": "READY",
+      "$$hashKey": "object:15705"
+    },
+    {
+      "text": "%spark\nval lines = sc.textFile(\"file:///opt/hadoop/100.txt\")",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:08:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mlines\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[String]\u001b[0m = file:///opt/hadoop/100.txt MapPartitionsRDD[91] at textFile at <console>:35\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_993013967",
+      "id": "paragraph_1644578339988_247896699",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:08:35+0000",
+      "dateFinished": "2022-03-11T15:08:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15706"
+    },
+    {
+      "text": "%md\nb. Find the length of the longest sentence in the corpus using the Map Reduce pattern, knowing that in scala you can write `4 max 6` to get 6 as their maximum. _Hint: look at the map-reduce of counting chars in the reader._",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>b. Find the length of the longest sentence in the corpus using the Map Reduce pattern, knowing that in scala you can write <code>4 max 6</code> to get 6 as their maximum. <em>Hint: look at the map-reduce of counting chars in the reader.</em></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1540286820",
+      "id": "paragraph_1631794514388_1658014158",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15707"
+    },
+    {
+      "text": "%spark\nprintln( \"Chars:\\t\", lines.map(s => s.length).\n                     reduce((v_i, v_j) => v_i max v_j))",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:13:32+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(Chars:\t,78)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=66",
+              "$$hashKey": "object:16861"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1924640748",
+      "id": "paragraph_1631794516065_1023514008",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:13:32+0000",
+      "dateFinished": "2022-03-11T15:13:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15708"
+    },
+    {
+      "text": "%md \nLet's run a word count on Shakespeare again by executing the cells below. ",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Let&rsquo;s run a word count on Shakespeare again by executing the cells below.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_61268984",
+      "id": "paragraph_1631794516979_1634986002",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15709"
+    },
+    {
+      "text": "%spark\nval words = lines.flatMap(line => line.split(\" \"))\n              .filter(_ != \"\")\n              .map(word => (word,1))\n              .reduceByKey(_ + _)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:14:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mwords\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(String, Int)]\u001b[0m = ShuffledRDD[98] at reduceByKey at <console>:38\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1637277391",
+      "id": "paragraph_1638293827329_547083269",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:14:46+0000",
+      "dateFinished": "2022-03-11T15:14:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15710"
+    },
+    {
+      "text": "%spark\nwords.take(10)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:14:49+0000",
+      "progress": 66,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres56\u001b[0m: \u001b[1m\u001b[32mArray[(String, Int)]\u001b[0m = Array((hack'd.,1), (durst,,2), (Ah!,6), (Worthy;,1), (bone,6), (vailing,1), (bombast,1), (person-,1), (LAFEU],1), (fiction.,1))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=67",
+              "$$hashKey": "object:16904"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1801967723",
+      "id": "paragraph_1639513911785_688468669",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:14:49+0000",
+      "dateFinished": "2022-03-11T15:14:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15711"
+    },
+    {
+      "text": "%spark\nwords.filter(_._1 == \"julia\").collect\n  .map({case (w,c) => \"%s occurs %d times\".format(w,c)}).map(println)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:27:26+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Julia occurs 12 times\n\u001b[1m\u001b[34mres66\u001b[0m: \u001b[1m\u001b[32mArray[Unit]\u001b[0m = Array(())\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=77",
+              "$$hashKey": "object:16921"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_2135928623",
+      "id": "paragraph_1631794611208_458640180",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:21:14+0000",
+      "dateFinished": "2022-03-11T15:21:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15712"
+    },
+    {
+      "text": "%md\nIn the reader, the count for “Julia” was 145. \nc. Why are the counts different now, and give examples of words that are not count.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>In the reader, the count for “Julia” was 145.<br />\nc. Why are the counts different now, and give examples of words that are not count.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1356941157",
+      "id": "paragraph_1639513427120_40116472",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15713"
+    },
+    {
+      "text": "%md\nNow we want to store the result of `words` to a textfile in the filesystem. \nd. Search for the correct function in the [RDD programming guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html) and use `file:///opt/hadoop/wc` as location.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:13:49+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Now we want to store the result of <code>words</code> to a textfile in the filesystem.<br />\nd. Search for the correct function in the <a href=\"https://spark.apache.org/docs/latest/rdd-programming-guide.html\">RDD programming guide</a> and use <code>file:///opt/hadoop/wc</code> as location.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_421841171",
+      "id": "paragraph_1631794640182_1479472893",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15714",
+      "dateFinished": "2022-03-12T09:13:49+0000",
+      "dateStarted": "2022-03-12T09:13:49+0000"
+    },
+    {
+      "text": "%spark\nwords.saveAsTextFile(\"file:///opt/hadoop/wc\")",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:17:29+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=82",
+              "$$hashKey": "object:17220"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_155378537",
+      "id": "paragraph_1631794642824_582481467",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15715",
+      "dateFinished": "2022-03-12T09:17:31+0000",
+      "dateStarted": "2022-03-12T09:17:29+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      }
+    },
+    {
+      "text": "%md\nWe can use a simple shell command to look into the directory that has been created.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We can use a simple shell command to look into the directory that has been created.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1192548824",
+      "id": "paragraph_1631794654282_2074133671",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15716"
+    },
+    {
+      "text": "%sh\nls -al /opt/hadoop/wc",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:17:40+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1446222813",
+      "id": "paragraph_1631794667893_1654848878",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:15717",
+      "dateFinished": "2022-03-12T09:17:40+0000",
+      "dateStarted": "2022-03-12T09:17:40+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "total 8992\ndrwxr-xr-x 2 hadoop hadoop    4096 Mar 12 09:17 .\ndrwx------ 1 hadoop hadoop    4096 Mar 12 09:17 ..\n-rw-r--r-- 1 hadoop hadoop       8 Mar 12 09:17 ._SUCCESS.crc\n-rw-r--r-- 1 hadoop hadoop   35576 Mar 12 09:17 .part-00000.crc\n-rw-r--r-- 1 hadoop hadoop   35668 Mar 12 09:17 .part-00001.crc\n-rw-r--r-- 1 hadoop hadoop       0 Mar 12 09:17 _SUCCESS\n-rw-r--r-- 1 hadoop hadoop 4552655 Mar 12 09:17 part-00000\n-rw-r--r-- 1 hadoop hadoop 4564467 Mar 12 09:17 part-00001\n"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%md\n\nHowever, we can also look at it directly from your terminal. Issue the command `docker exec -it hey-spark /bin/bash` in a terminal on the machine running the notebook container and navigate to the same folder as above.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>However, we can also look at it directly from your terminal. Issue the command <code>docker exec -it hey-spark /bin/bash</code> in a terminal on the machine running the notebook container and navigate to the same folder as above.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1849360743",
+      "id": "paragraph_1639514412539_1659579788",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15718"
+    },
+    {
+      "text": "%md\nf. Inspect the files. How many and why are there multiple result files?",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>f. Inspect the files. How many and why are there multiple result files?</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_1719980714",
+      "id": "paragraph_1631794679101_712928786",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15719"
+    },
+    {
+      "text": "%md\ng. (optional/advanced) Complete freedom! Do whatever you want with the Shakespeare data. Do some different word counts, other filters, etc. \n\nIf you want to store another textfile to the file system, make sure to use another name than `wc`. Files are not automatically overwritten. \nYou can also clean up and delete the old directory, for this you can use the command below (for another file: change file name accordingly).",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>g. (optional/advanced) Complete freedom! Do whatever you want with the Shakespeare data. Do some different word counts, other filters, etc.</p>\n<p>If you want to store another textfile to the file system, make sure to use another name than <code>wc</code>. Files are not automatically overwritten.<br />\nYou can also clean up and delete the old directory, for this you can use the command below (for another file: change file name accordingly).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_1659044830",
+      "id": "paragraph_1631794707296_339287076",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15720"
+    },
+    {
+      "text": "%sh\nrm -rf /opt/hadoop/wc",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_36332891",
+      "id": "paragraph_1631794717982_1676534120",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15721"
+    },
+    {
+      "text": "%md\n## Wrap up\n\nIf you have reached this point properly and understood what you observed, you have a solid understanding of Spark and its execution model. \n\nExport your Exercises notebook by clicking `Export this note (zpln)` in the toolbar (do not export it as IPython, because it can mess up the cells) and submit your Zeppelin Notebook to the assignment box on Brightspace. After that, you can do the quiz to check your answers. If you have any questions left after that, do not hesistate and come to the lab sessions to discuss your assignment (or ask your question online in the matrix room).",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Wrap up</h2>\n<p>If you have reached this point properly and understood what you observed, you have a solid understanding of Spark and its execution model.</p>\n<p>Export your Exercises notebook by clicking <code>Export this note (zpln)</code> in the toolbar (do not export it as IPython, because it can mess up the cells) and submit your Zeppelin Notebook to the assignment box on Brightspace. After that, you can do the quiz to check your answers. If you have any questions left after that, do not hesistate and come to the lab sessions to discuss your assignment (or ask your question online in the matrix room).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_1603562640",
+      "id": "20210323-214017_672918386",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:15722"
+    }
+  ],
+  "name": "A3_Exercises",
+  "id": "2GYVZC1NR",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.9.0",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/A3_Exercises"
+}
