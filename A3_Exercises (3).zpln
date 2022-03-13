@@ -1,0 +1,2070 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n# Big Data: Spark RDDs (exercises)\nObjectives:\n* Show the basic understanding of (creating) RDDs\n* Get to know what happens with partitions and partitioners in Spark\n* Work with the Shakespeare Data",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h1>Big Data: Spark RDDs (exercises)</h1>\n<p>Objectives:</p>\n<ul>\n<li>Show the basic understanding of (creating) RDDs</li>\n<li>Get to know what happens with partitions and partitioners in Spark</li>\n<li>Work with the Shakespeare Data</li>\n</ul>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_2073053927",
+      "id": "20210323-214017_1217973860",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:19688"
+    },
+    {
+      "text": "%spark\n// Sanity check for Spark and Scala\nprintf(\"Spark %s\\nScala %s\", sc.version, util.Properties.versionString)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:51:20+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Spark 3.1.1\nScala version 2.12.10"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_1426614799",
+      "id": "paragraph_1631794243863_294069186",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T11:51:20+0000",
+      "dateFinished": "2022-03-11T11:51:20+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19689"
+    },
+    {
+      "text": "%md\n## Exercise 1.1\nCheck the Spark RDD programming guide,\n\n* https://spark.apache.org/docs/3.1.1/rdd-programming-guide.html\n\nand answer the following questions (in 1-3 sentences):\n\na. What is an RDD?\nAn RDD, short for Resilient Distributed Dataset, is an collection of elements that can be used in parallel.\nb. Explain the differences between transformations and actions.\nTransformations use an existing dataset to create a new dataset.\nActions return a value to the driver program after running a computation on the dataset.\nSource(documentation)\nc. Give two example transformations where shuffling the data is needed.\nrepartition()\nrepartitionandsortwithinpartitions()\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:26:33+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 1.1</h2>\n<p>Check the Spark RDD programming guide,</p>\n<ul>\n<li><a href=\"https://spark.apache.org/docs/3.1.1/rdd-programming-guide.html\">https://spark.apache.org/docs/3.1.1/rdd-programming-guide.html</a></li>\n</ul>\n<p>and answer the following questions (in 1-3 sentences):</p>\n<p>a. What is an RDD?<br />\nAn RDD, short for Resilient Distributed Dataset, is an collection of elements that can be used in parallel.<br />\nb. Explain the differences between transformations and actions.<br />\nTransformations use an existing dataset to create a new dataset.<br />\nActions return a value to the driver program after running a computation on the dataset.<br />\nSource(documentation)<br />\nc. Give two example transformations where shuffling the data is needed.<br />\nrepartition()<br />\nrepartitionandsortwithinpartitions()</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_1356236778",
+      "id": "paragraph_1638911853147_1545900617",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:26:33+0000",
+      "dateFinished": "2022-03-12T09:26:33+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19690"
+    },
+    {
+      "text": "%md\n## Exercise 1.2\na. Give the line of code for creating an RDD using the `parallelize()` operation with the numbers 0 to 799 in it. We want this RDD to be split up in 8 different partitions.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 1.2</h2>\n<p>a. Give the line of code for creating an RDD using the <code>parallelize()</code> operation with the numbers 0 to 799 in it. We want this RDD to be split up in 8 different partitions.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261800_1732141145",
+      "id": "paragraph_1631794220150_1011381899",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19691"
+    },
+    {
+      "text": "%spark\nval rdd = sc.parallelize(0 to 799,8)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:46:55+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mrdd\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[Int]\u001b[0m = ParallelCollectionRDD[49] at parallelize at <console>:27\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1157592210",
+      "id": "paragraph_1631794251921_1962384498",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:46:55+0000",
+      "dateFinished": "2022-03-11T12:46:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19692"
+    },
+    {
+      "text": "%md\nb. If we execute the line of code from answer a, what will happen?\nWe execute the spark code, initializing a new RDD from a collection of numbers. The second argument splits the data into 8 partitions. \nAn object ParallelCollectionRDD[49] is created.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:48:29+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>b. If we execute the line of code from answer a, what will happen?<br />\nWe execute the spark code, initializing a new RDD from a collection of numbers. The second argument splits the data into 8 partitions.<br />\nAn object ParallelCollectionRDD[49] is created.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1481744831",
+      "id": "paragraph_1644578073323_1894678196",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:48:29+0000",
+      "dateFinished": "2022-03-11T12:48:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19693"
+    },
+    {
+      "text": "%md\nWe now execute the following line of code:",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:48:49+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We now execute the following line of code:</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_2006110270",
+      "id": "paragraph_1631794274564_1276090416",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:48:49+0000",
+      "dateFinished": "2022-03-11T12:48:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19694"
+    },
+    {
+      "text": "%spark\nval sample = rdd.takeSample(false,8)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T12:48:51+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34msample\u001b[0m: \u001b[1m\u001b[32mArray[Int]\u001b[0m = Array(100, 574, 572, 408, 648, 246, 716, 352)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=21",
+              "$$hashKey": "object:21370"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=22",
+              "$$hashKey": "object:21371"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1981422970",
+      "id": "paragraph_1631794284910_1878093945",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T12:48:51+0000",
+      "dateFinished": "2022-03-11T12:48:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19695"
+    },
+    {
+      "text": "%md\nc. What do the parameters ‘false’ and ‘8’ mean?\nThe parameter withreplacement=False, means that the data points will not be replaced and thus can be picked again. The parameter num=8 means that we take 8 items out of the dataset.\nd. After executing the code block above, look at the [stages](http://localhost:4040/stages/). Why did Spark fire off eight different tasks?\nWe have 8 stages because we divided the data into 8 partititons.\ne. (optional/advanced) Why would Spark create two jobs to take the sample? _Hint: read the [code on takeSample()](https://github.com/apache/spark/blob/1d550c4e90275ab418b9161925049239227f3dc9/core/src/main/scala/org/apache/spark/rdd/RDD.scala#L620)._",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:27:34+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>c. What do the parameters ‘false’ and ‘8’ mean?<br />\nThe parameter withreplacement=False, means that the data points will not be replaced and thus can be picked again. The parameter num=8 means that we take 8 items out of the dataset.<br />\nd. After executing the code block above, look at the <a href=\"http://localhost:4040/stages/\">stages</a>. Why did Spark fire off eight different tasks?<br />\nWe have 8 stages because we divided the data into 8 partititons.<br />\ne. (optional/advanced) Why would Spark create two jobs to take the sample? <em>Hint: read the <a href=\"https://github.com/apache/spark/blob/1d550c4e90275ab418b9161925049239227f3dc9/core/src/main/scala/org/apache/spark/rdd/RDD.scala#L620\">code on takeSample()</a>.</em></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1535384873",
+      "id": "paragraph_1631794296169_1420267951",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:27:34+0000",
+      "dateFinished": "2022-03-12T09:27:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19696"
+    },
+    {
+      "text": "%md \n## Exercise 1.3\n(In one or a couple of sentences:)\na. Describe what the functions `flatmap()` and `map()` do and its differences.\nThe map function applies a function on a set of data.\nThe flatmap function is the same as map, but the input function that it takes does not return a single output but 0 or more outputs, it returns a seq, where the map function does not.\nb. Describe what the functions `take()` and `collect()` do and what can be hazardous in using `collect()`.\ntake(n) returns an array with the first n arguments of the dataset, it can be used to get subset arrays from the first point onwards.\ncollect() returns an array containing all the elements of the dataset.\ncollect() can be hazardous when using big datasets because you are then creating enormous arrays, which can lead to an OOM error.\nc. Describe what `cache()` does and what can be hazardous about it.\ncache() persists an RDD by putting it in memory. \nThis is not hazardous because cache() is fault-tolerant in scala, mistakes will automatically be resolved.\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:28:05+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 1.3</h2>\n<p>(In one or a couple of sentences:)<br />\na. Describe what the functions <code>flatmap()</code> and <code>map()</code> do and its differences.<br />\nThe map function applies a function on a set of data.<br />\nThe flatmap function is the same as map, but the input function that it takes does not return a single output but 0 or more outputs, it returns a seq, where the map function does not.<br />\nb. Describe what the functions <code>take()</code> and <code>collect()</code> do and what can be hazardous in using <code>collect()</code>.<br />\ntake(n) returns an array with the first n arguments of the dataset, it can be used to get subset arrays from the first point onwards.<br />\ncollect() returns an array containing all the elements of the dataset.<br />\ncollect() can be hazardous when using big datasets because you are then creating enormous arrays, which can lead to an OOM error.<br />\nc. Describe what <code>cache()</code> does and what can be hazardous about it.<br />\ncache() persists an RDD by putting it in memory.<br />\nThis is not hazardous because cache() is fault-tolerant in scala, mistakes will automatically be resolved.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1414283988",
+      "id": "paragraph_1631794330892_289632298",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:28:05+0000",
+      "dateFinished": "2022-03-12T09:28:05+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19697"
+    },
+    {
+      "text": "%md\n## Exercise 2.1\na. For each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.\nWe use the following code to determine the number of partitions and the use of a partitioner:\nprintf( \"Number of partitions: %d\\n\", A.partitions.length)\nA.partitioner\n\nA 8 partitions, no partitioner\nB 8 partitions, no partitioner\nC 8 partitions, partitioner: Some(org.apache.spark.HashPartitioner@8)\nD 2 partitions, partitioner: Some(org.apache.spark.HashPartitioner@2)\nE 2 partitions, partitioner: Some(org.apache.spark.HashPartitioner@2)\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:28:31+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 2.1</h2>\n<p>a. For each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.<br />\nWe use the following code to determine the number of partitions and the use of a partitioner:<br />\nprintf( &ldquo;Number of partitions: %d\\n&rdquo;, A.partitions.length)<br />\nA.partitioner</p>\n<p>A 8 partitions, no partitioner<br />\nB 8 partitions, no partitioner<br />\nC 8 partitions, partitioner: Some(org.apache.spark.HashPartitioner@8)<br />\nD 2 partitions, partitioner: Some(org.apache.spark.HashPartitioner@2)<br />\nE 2 partitions, partitioner: Some(org.apache.spark.HashPartitioner@2)</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261801_1885997607",
+      "id": "paragraph_1631197722812_724425735",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:28:31+0000",
+      "dateFinished": "2022-03-12T09:28:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19698"
+    },
+    {
+      "text": "%spark\nval A = sc.parallelize(0 to 999,8)\nA.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:40:22+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Number of partitions: 8\n\u001b[1m\u001b[34mA\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[Int]\u001b[0m = ParallelCollectionRDD[62] at parallelize at <console>:31\n\u001b[1m\u001b[34mres33\u001b[0m: \u001b[1m\u001b[32mOption[org.apache.spark.Partitioner]\u001b[0m = None\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=38",
+              "$$hashKey": "object:21571"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_363191305",
+      "id": "20210323-214017_1526376678",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:18:52+0000",
+      "dateFinished": "2022-03-11T13:18:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19699"
+    },
+    {
+      "text": "%spark\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:20:38+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1647004838136_1514729432",
+      "id": "paragraph_1647004838136_1514729432",
+      "dateCreated": "2022-03-11T13:20:38+0000",
+      "status": "READY",
+      "$$hashKey": "object:19700"
+    },
+    {
+      "text": "%spark\nval B = A.map(x => (x % 100, 1000 - x))\nB.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:40:22+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mB\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[67] at map at <console>:33\n\u001b[1m\u001b[34mres38\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((0,1000), (1,999), (2,998), (3,997), (4,996), (5,995), (6,994), (7,993), (8,992), (9,991), (10,990), (11,989), (12,988), (13,987), (14,986), (15,985), (16,984), (17,983), (18,982), (19,981))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=44",
+              "$$hashKey": "object:21671"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_569050887",
+      "id": "20210323-214017_753817829",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:40:22+0000",
+      "dateFinished": "2022-03-11T13:40:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19701"
+    },
+    {
+      "text": "%spark\nval C = B.groupByKey()\nC.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:44:37+0000",
+      "progress": 11,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mC\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Iterable[Int])]\u001b[0m = ShuffledRDD[69] at groupByKey at <console>:35\n\u001b[1m\u001b[34mres40\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Iterable[Int])]\u001b[0m = Array((96,CompactBuffer(904, 804, 704, 604, 504, 404, 304, 204, 104, 4)), (56,CompactBuffer(944, 844, 744, 644, 544, 444, 344, 244, 144, 44)), (16,CompactBuffer(984, 884, 784, 684, 584, 484, 384, 284, 184, 84)), (80,CompactBuffer(920, 820, 720, 620, 520, 420, 320, 220, 120, 20)), (48,CompactBuffer(952, 852, 752, 652, 552, 452, 352, 252, 152, 52)), (32,CompactBuffer(968, 868, 768, 668, 568, 468, 368, 268, 168, 68)), (0,CompactBuffer(1000, 900, 800, 700, 600, 500, 400, 300, 200, 100)), (24,CompactBuffer(976, 876, 776, 676, 576, 476, 376, 276, 176, 76)), (64,CompactBuffer(936, 836, 736, 636, 536, 436, 336,...\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=46",
+              "$$hashKey": "object:21729"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=47",
+              "$$hashKey": "object:21730"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_1603927004",
+      "id": "20210323-214017_1628283214",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:44:37+0000",
+      "dateFinished": "2022-03-11T13:44:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19702"
+    },
+    {
+      "text": "%spark\nimport org.apache.spark.HashPartitioner\nval D = B.partitionBy(new HashPartitioner(2))\nD.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:45:41+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.HashPartitioner\n\u001b[1m\u001b[34mD\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = ShuffledRDD[70] at partitionBy at <console>:36\n\u001b[1m\u001b[34mres41\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((0,1000), (2,998), (4,996), (6,994), (8,992), (10,990), (12,988), (14,986), (16,984), (18,982), (20,980), (22,978), (24,976), (26,974), (28,972), (30,970), (32,968), (34,966), (36,964), (38,962))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=48",
+              "$$hashKey": "object:21792"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_905086178",
+      "id": "20210323-214017_1339820103",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:45:41+0000",
+      "dateFinished": "2022-03-11T13:45:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19703"
+    },
+    {
+      "text": "%spark\nval E = D.groupByKey()\nE.take(20)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:45:46+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mE\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Iterable[Int])]\u001b[0m = MapPartitionsRDD[71] at groupByKey at <console>:37\n\u001b[1m\u001b[34mres42\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Iterable[Int])]\u001b[0m = Array((34,CompactBuffer(966, 866, 766, 666, 566, 466, 366, 266, 166, 66)), (52,CompactBuffer(948, 848, 748, 648, 548, 448, 348, 248, 148, 48)), (96,CompactBuffer(904, 804, 704, 604, 504, 404, 304, 204, 104, 4)), (4,CompactBuffer(996, 896, 796, 696, 596, 496, 396, 296, 196, 96)), (16,CompactBuffer(984, 884, 784, 684, 584, 484, 384, 284, 184, 84)), (82,CompactBuffer(918, 818, 718, 618, 518, 418, 318, 218, 118, 18)), (66,CompactBuffer(934, 834, 734, 634, 534, 434, 334, 234, 134, 34)), (28,CompactBuffer(972, 872, 772, 672, 572, 472, 372, 272, 172, 72)), (54,CompactBuffer(946, 846, 746, 646, 546, 446, 3...\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=49",
+              "$$hashKey": "object:21850"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_842068103",
+      "id": "paragraph_1631198002576_655744250",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:45:46+0000",
+      "dateFinished": "2022-03-11T13:45:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19704"
+    },
+    {
+      "text": "%md\nb. Why does the `take()` of D retrieve different pairs than B?\nBecause of the hash partitioner, the items are partitioned by key and not uniformly anymore.\nc. Explain why the keys are no longer in order in the `take()` of C and E.\nBecause the items are grouped by key into a single sequence. (source documentation of function)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:28:51+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>b. Why does the <code>take()</code> of D retrieve different pairs than B?<br />\nBecause of the hash partitioner, the items are partitioned by key and not uniformly anymore.<br />\nc. Explain why the keys are no longer in order in the <code>take()</code> of C and E.<br />\nBecause the items are grouped by key into a single sequence. (source documentation of function)</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_123077770",
+      "id": "paragraph_1638909440005_1799348093",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:28:51+0000",
+      "dateFinished": "2022-03-12T09:28:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19705"
+    },
+    {
+      "text": "%md\n## Exercise 2.2\nFor each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.\n\nWe use the following code to determine the number of partitions and the use of a partitioner:\nprintf( \"Number of partitions: %d\\n\", F.partitions.length)\nF.partitioner\n\nF 8 partitions, no partitioner\nG 8 partitions, partitioner: Some(org.apache.spark.HashPartitioner@8)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:29:04+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 2.2</h2>\n<p>For each value, write down the number of partitions, whether there is a partitioner assigned to and if so, which one. Also, briefly indicate how you got the answer.</p>\n<p>We use the following code to determine the number of partitions and the use of a partitioner:<br />\nprintf( &ldquo;Number of partitions: %d\\n&rdquo;, F.partitions.length)<br />\nF.partitioner</p>\n<p>F 8 partitions, no partitioner<br />\nG 8 partitions, partitioner: Some(org.apache.spark.HashPartitioner@8)</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_1604613399",
+      "id": "paragraph_1631202698099_1838796185",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:29:04+0000",
+      "dateFinished": "2022-03-12T09:29:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19706"
+    },
+    {
+      "text": "%spark\nval F = C.map( {case(x,y) => (x, y.reduce((a,b) => a + b))} )\nF.take(20)\nprintf( \"Number of partitions: %d\\n\", F.partitions.length)\nF.partitioner\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:47:03+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Number of partitions: 8\n\u001b[1m\u001b[34mF\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[74] at map at <console>:37\n\u001b[1m\u001b[34mres45\u001b[0m: \u001b[1m\u001b[32mOption[org.apache.spark.Partitioner]\u001b[0m = None\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=53",
+              "$$hashKey": "object:22000"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=54",
+              "$$hashKey": "object:22001"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261802_1185334149",
+      "id": "20210323-214017_546452301",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:47:03+0000",
+      "dateFinished": "2022-03-11T13:47:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19707"
+    },
+    {
+      "text": "%spark\nval G = C.mapValues( y => y.reduce((a,b) => a + b))\nG.take(10)\nprintf( \"Number of partitions: %d\\n\", G.partitions.length)\nG.partitioner\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T13:47:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Number of partitions: 8\n\u001b[1m\u001b[34mG\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[75] at mapValues at <console>:37\n\u001b[1m\u001b[34mres46\u001b[0m: \u001b[1m\u001b[32mOption[org.apache.spark.Partitioner]\u001b[0m = Some(org.apache.spark.HashPartitioner@8)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=55",
+              "$$hashKey": "object:22063"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_1057493005",
+      "id": "paragraph_1638908693622_1541707331",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T13:47:40+0000",
+      "dateFinished": "2022-03-11T13:47:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19708"
+    },
+    {
+      "text": "%md\n## Exercise 2.3\na. Look up documentation of `repartition()` and `coalesce()` to find out what each of the functions does. Describe the differences. \nrepartition() shuffles the data randomly to create more or fewer partitions.\ncoalesce() decreases the number of partitions.\nThe main differences are that repartition can also upscale while coalesce can only downscale and that repartition also shuffles all data over the network.\n\nb. Take a look at the [Spark UI](http://localhost:4040) (after executing the cells below). Explain why the `takeSample()` of value I requires one shuffle phase less than H. \ncoalesce uses the existing partitions to minimalize data movement, while repartition does not use the existing partitions and hence has to shuffle the dataset, this is the extra step we see.\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:29:38+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 2.3</h2>\n<p>a. Look up documentation of <code>repartition()</code> and <code>coalesce()</code> to find out what each of the functions does. Describe the differences.<br />\nrepartition() shuffles the data randomly to create more or fewer partitions.<br />\ncoalesce() decreases the number of partitions.<br />\nThe main differences are that repartition can also upscale while coalesce can only downscale and that repartition also shuffles all data over the network.</p>\n<p>b. Take a look at the <a href=\"http://localhost:4040\">Spark UI</a> (after executing the cells below). Explain why the <code>takeSample()</code> of value I requires one shuffle phase less than H.<br />\ncoalesce uses the existing partitions to minimalize data movement, while repartition does not use the existing partitions and hence has to shuffle the dataset, this is the extra step we see.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_1394405325",
+      "id": "paragraph_1631197533979_69515493",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:29:38+0000",
+      "dateFinished": "2022-03-12T09:29:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19709"
+    },
+    {
+      "text": "%spark\nval H = G.repartition(4)\nH.takeSample(true, 10)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:59:12+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mH\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = MapPartitionsRDD[86] at repartition at <console>:37\n\u001b[1m\u001b[34mres51\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((99,4510), (11,5390), (28,5220), (77,4730), (95,4550), (55,4950), (65,4850), (52,4980), (57,4930), (27,5230))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=60",
+              "$$hashKey": "object:22167"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=61",
+              "$$hashKey": "object:22168"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_350497714",
+      "id": "20210323-214017_1632643197",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:59:12+0000",
+      "dateFinished": "2022-03-11T14:59:12+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19710"
+    },
+    {
+      "text": "%spark\nH.toDebugString",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:58:01+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres48\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m =\n(4) MapPartitionsRDD[79] at repartition at <console>:35 []\n |  CoalescedRDD[78] at repartition at <console>:35 []\n |  ShuffledRDD[77] at repartition at <console>:35 []\n +-(8) MapPartitionsRDD[76] at repartition at <console>:35 []\n    |  MapPartitionsRDD[75] at mapValues at <console>:37 []\n    |  ShuffledRDD[69] at groupByKey at <console>:35 []\n    +-(8) MapPartitionsRDD[67] at map at <console>:33 []\n       |  ParallelCollectionRDD[62] at parallelize at <console>:31 []\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261803_1179825659",
+      "id": "paragraph_1631199440086_136732456",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:58:01+0000",
+      "dateFinished": "2022-03-11T14:58:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19711"
+    },
+    {
+      "text": "%spark\nval I = G.coalesce(4)\nI.takeSample(true, 10)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:59:16+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/scala",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mI\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(Int, Int)]\u001b[0m = CoalescedRDD[88] at coalesce at <console>:37\n\u001b[1m\u001b[34mres52\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Int)]\u001b[0m = Array((42,5080), (37,5130), (35,5150), (56,4940), (98,4520), (32,5180), (83,4670), (18,5320), (34,5160), (52,4980))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=62",
+              "$$hashKey": "object:22282"
+            },
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=63",
+              "$$hashKey": "object:22283"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_109325346",
+      "id": "20210323-214017_1102115685",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:59:16+0000",
+      "dateFinished": "2022-03-11T14:59:16+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19712"
+    },
+    {
+      "text": "%spark\nI.toDebugString",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T14:58:08+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres50\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m =\n(4) CoalescedRDD[81] at coalesce at <console>:35 []\n |  MapPartitionsRDD[75] at mapValues at <console>:37 []\n |  ShuffledRDD[69] at groupByKey at <console>:35 []\n +-(8) MapPartitionsRDD[67] at map at <console>:33 []\n    |  ParallelCollectionRDD[62] at parallelize at <console>:31 []\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1916095648",
+      "id": "paragraph_1631199441170_1752903184",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T14:58:08+0000",
+      "dateFinished": "2022-03-11T14:58:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19713"
+    },
+    {
+      "text": "%md\n## Exercise 3\nWe return to the Shakespeare data that we already saw in the reader.\na. Create `val lines`. _Hint: this is also done in the reader._",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 3</h2>\n<p>We return to the Shakespeare data that we already saw in the reader.<br />\na. Create <code>val lines</code>. <em>Hint: this is also done in the reader.</em></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1303638352",
+      "id": "paragraph_1631794513100_1892205778",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19714"
+    },
+    {
+      "text": "%spark\nval lines = sc.textFile(\"file:///opt/hadoop/100.txt\")",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:08:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mlines\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[String]\u001b[0m = file:///opt/hadoop/100.txt MapPartitionsRDD[91] at textFile at <console>:35\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_993013967",
+      "id": "paragraph_1644578339988_247896699",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:08:35+0000",
+      "dateFinished": "2022-03-11T15:08:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19715"
+    },
+    {
+      "text": "%md\nb. Find the length of the longest sentence in the corpus using the Map Reduce pattern, knowing that in scala you can write `4 max 6` to get 6 as their maximum. _Hint: look at the map-reduce of counting chars in the reader._",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>b. Find the length of the longest sentence in the corpus using the Map Reduce pattern, knowing that in scala you can write <code>4 max 6</code> to get 6 as their maximum. <em>Hint: look at the map-reduce of counting chars in the reader.</em></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1540286820",
+      "id": "paragraph_1631794514388_1658014158",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19716"
+    },
+    {
+      "text": "%spark\nprintln( \"Chars:\\t\", lines.map(s => s.length).\n                     reduce((v_i, v_j) => v_i max v_j))",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:13:32+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(Chars:\t,78)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=66",
+              "$$hashKey": "object:22541"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1924640748",
+      "id": "paragraph_1631794516065_1023514008",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:13:32+0000",
+      "dateFinished": "2022-03-11T15:13:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19717"
+    },
+    {
+      "text": "%md \nLet's run a word count on Shakespeare again by executing the cells below. ",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Let&rsquo;s run a word count on Shakespeare again by executing the cells below.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_61268984",
+      "id": "paragraph_1631794516979_1634986002",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19718"
+    },
+    {
+      "text": "%spark\nval words = lines.flatMap(line => line.split(\" \"))\n              .filter(_ != \"\")\n              .map(word => (word,1))\n              .reduceByKey(_ + _)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:14:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mwords\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[(String, Int)]\u001b[0m = ShuffledRDD[98] at reduceByKey at <console>:38\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261804_1637277391",
+      "id": "paragraph_1638293827329_547083269",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:14:46+0000",
+      "dateFinished": "2022-03-11T15:14:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19719"
+    },
+    {
+      "text": "%spark\nwords.take(10)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:14:49+0000",
+      "progress": 66,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres56\u001b[0m: \u001b[1m\u001b[32mArray[(String, Int)]\u001b[0m = Array((hack'd.,1), (durst,,2), (Ah!,6), (Worthy;,1), (bone,6), (vailing,1), (bombast,1), (person-,1), (LAFEU],1), (fiction.,1))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=67",
+              "$$hashKey": "object:22697"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1801967723",
+      "id": "paragraph_1639513911785_688468669",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:14:49+0000",
+      "dateFinished": "2022-03-11T15:14:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19720"
+    },
+    {
+      "text": "%spark\nwords.filter(_._1 == \"julia\").collect\n  .map({case (w,c) => \"%s occurs %d times\".format(w,c)}).map(println)",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T15:27:26+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Julia occurs 12 times\n\u001b[1m\u001b[34mres66\u001b[0m: \u001b[1m\u001b[32mArray[Unit]\u001b[0m = Array(())\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=77",
+              "$$hashKey": "object:22755"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_2135928623",
+      "id": "paragraph_1631794611208_458640180",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-11T15:21:14+0000",
+      "dateFinished": "2022-03-11T15:21:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19721"
+    },
+    {
+      "text": "%md\nNow we want to store the result of `words` to a textfile in the filesystem. \nd. Search for the correct function in the [RDD programming guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html) and use `file:///opt/hadoop/wc` as location.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:13:49+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Now we want to store the result of <code>words</code> to a textfile in the filesystem.<br />\nd. Search for the correct function in the <a href=\"https://spark.apache.org/docs/latest/rdd-programming-guide.html\">RDD programming guide</a> and use <code>file:///opt/hadoop/wc</code> as location.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_421841171",
+      "id": "paragraph_1631794640182_1479472893",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:13:49+0000",
+      "dateFinished": "2022-03-12T09:13:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19723"
+    },
+    {
+      "text": "%spark\nwords.saveAsTextFile(\"file:///opt/hadoop/wc\")",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:17:29+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://9ba4b5eb0f85:4040/jobs/job?id=82",
+              "$$hashKey": "object:22895"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_155378537",
+      "id": "paragraph_1631794642824_582481467",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:17:29+0000",
+      "dateFinished": "2022-03-12T09:17:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19724"
+    },
+    {
+      "text": "%md\nWe can use a simple shell command to look into the directory that has been created.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We can use a simple shell command to look into the directory that has been created.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1192548824",
+      "id": "paragraph_1631794654282_2074133671",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19725"
+    },
+    {
+      "text": "%sh\ncat /opt/hadoop/wc/.part-00000.crc",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-12T09:55:24+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "crc\u0000\u0000\u0000\u0002\u0000K|I�+q�h��\fL4�L�oG�D��4'�Y͒8�h\u0017!rH�׺��BE+�a\r�[��\u0003�W�o&��koY\u0002�PW{\fNEԧ��T<��쫓�!\u0010]��Ǣ�vj:����1K�㳈��ڨ��|�\u0011�7��(*\u001b\u000e�fPB[=Jr�k_x\u0005����\u001b-���dZ\u0007Y�(\u0003�%�A#��j\u0016\u0011�U\u0011�t�݊���9�T{\u0004\r���?�-\u000f��k^�_����5i�\u000eS�(���^$\r.c�\u0010Ǳ3lr�� ������[\u0018�9n�М�a\u001f��\u0000�TW�o\u0016����C��H\u000b�F� ق��]m�bQ�\r'\t�@\b�\u0016�ݻ\u001e�b��嗪��\n�\b����U�U�w�C����T=�:I���[�j@fh��p�J\u0010�\fC+�A\u001c\u0006\u0005(\u0018���Ȥc`?\u0016f0��x�؂\"�R�{äs�I�\u000eu��!���߿�T�w\f1n��}���\u000b��f��a�̨U+��2{2�Af��\u0017�i\u0010,�\u0005nBᴵ�Q�����\u0015h�p�à}���/�\u001e�:�\u0012h9N�\u001b����U�Re\u0016\u0005���\b|Pt�\nx\u001f��cp�n\u001d��Di�\u000eS�b[�\t\u0013������ep\u0017\u001e\u000e�#\u0005\u001b_p\u000by]\u0001\u0005���Z�\u0003�;���������2��nzZ�\u001b���.?\u0005��%�7H��}\f\u001el�E\u0000s!\u001b��୤�FD�K��f(���oRK��WI\t\u0000����%�\u0018����CZ���\u0013\u0014@n�\u0000%�\u0012�]g����eD�\u0007�L>p\u0018P\u001b��\u0019îc��'���/)\u0006-z���\t��q��?\u0005�\u0005\u001c�֓�x\u0014kX�H�e=�u���g/�.E�3��Qۗ��q1\u001f����r��Gm#E5�)Ҷ��qG\"�%b��\u001c�z�.x�v�\u0001���C�Z�\u001b>�H\u001e \"\b��pޑ\u001dYT�����5�(1^�\u0004��'��E\u001bn\u0013N���/��^�U���M.\t��G\b2ywM���U֥��}\b�~�8@vA]���5�K\u001eu�(��W�\u0011�j('\u000b���\u0015�\u0010q~�O�֫�3{���'�6봾\u001e�����GM�w���JczNs�� ����A�:k�0;\u0018�6u|N&܍�.�ثL����Ag\t~�\u001b�v�q�\u0011Cp���n\n\u0000\u0013G�\t�β\u0002m/\u0015?���w\u0012��\u000f(\u0003�u���A��F�\u0002����L��j�HaQ��5��\u0019��!?�R�o��N  N��\b_\u0015�d�μ��\u0016Y#��-�H�Cd��UR��A�U\u0011\u0010\\]a\u0019K�\u0010^\t�T\u0016zb�\u001a��/�\u000e|{�벷�\u0003�X��YX\u001er�U��rc����&��t���P��\u0004$��\u0010��O�ۑ��m\u001eFf�r y5a�\u0014�����9T�}\u0001�w\f��o\u0003k]5G�ISG�\b�\u0010��?v4�\u001d��\u0005�T\u001f��ό6��>�?d�5\t��:鷇O\u0018��\t:��� 1\u000b�c\u000f�7\u0019���B(mq}�4�����͹���\u0013��p�x�2��U\u0018st\u000b⊊:�b�B{tFm\u001bN+\u0010\u0015�\u0011�\u0005�8L9k�ibC7�\u000eVJ\u001c�\u001c��\"�G8K'���<�t=�\u0014q�b�,�#�I���\u0011r��9H�����B�>�d\u0001]\u0002<1�@v�n�mZ�\u001dO��\u0007:��y��Uakt�������-E\u0016��+j�Iz�B\u0001�(��\u000eZ�IG�v��Z{V��Ӏ��YΥ�*��Ԓ!�()\u0018ێ��\u001f\u0019�19���0�\u0001G�F\u001c=�P�\u0001Ue�\u0017.I�b�6��+�f�=3/�7KS3�\u0011�X��2���5?x�A\u0016f^�ҋ�MO�d�;\\�M��l,�hl�1�¤E�6�z��g��#{S\u0010��\"E|-I�g�)�\u0000x����g�a�\u001a�7\f��%��SH\u001d��\u0001�Mr�`+4�\u000f�\u001f4Ji��=��V`����A\u0005\\�h��1֩\r���YC�nG�7S�r��2\u0005Ae\u0015؋�\u0000n\u000f\u0006/Fj�п�v��=\u001a/I\u0003\u0018ױ��Y�\u0010��u�{�3�!\u0006$���HR���l��qAKx!\u001a��1��\u0019T\n�{m%�~�b\bJ6�WD�2D���C������ë�\r����bj�[��\u000e\u0010 \u0003����S%\u0012~�A.�:�\u0019\u000bR� \u0016B�\u001b?.�'�6X�\u0002.�\u000f��.NҘ��%O� V\u0004�\u001cmy\u0006�I�E�U�bO�=���\r\u0018R�C�fW=1\u0010UI�@�_\u001a!���;Ԝq�\u001e˗\u0015\u0017��&V\u0006\u0004��J�[\u00155'�Co�\u001e\rE��\u00169c\u0002�de�*A\u0014H���a#���,\u0016ȿ��\u001a;K��\u000f�ؚ�\fE8���\u0006��ۭT��bZ\u0002~\u0004\u0018�\u000e[>��^�Y�wy��>�\u0011q�\u0015ʈ\u0005U��A^�:���}�����zXJ��Kש�_\fg�sp#�H��O\u0013��e,;�ԟҟ$�\u0005$,(&>�\u0001�`�-�C�Z�Ϫ\f\u001f\u0013{�4\"O�j�{��QN�k���\n\u0017���%͙m�Z���TdyT �1+\u0019�9\u0007��{좟�8��g��\bjq�\u0012�\u00173C�\u000f\u0005\u0010�$X1W��X�\u0013\"~�D\u001d��\t^\u0016����z�>�b0�Oz�>�V�����x��Yk�\u0015�tBddAN�\u000b~D#U�dn\\\u001c�N1U$��'�+\u0012z��'j\u0013�\u0003�0��Y�ޅ�K!��:�z��2�ف#N>��$[�R�Ek\u0011�th���S�Q提��M�ˊ/߄\u0019a�z�Bzwۏ\u0003@u�2��C�a\u0014�|�@�\u0018`�\rK���\u000b%����)���\u0015��\t\u001b�\u000fWrE���>���c��\u0002�\u0017Ԛ�7�h\u0000F�\u0013�����\n?P�\u0004Ј\u0003t\u0003 dI\"Oz�J�6\b��e2V��\u000f\u001c!�`�i�$c\u001f�o��̫�ٰ1�jM�Ǒݲɗ!�+n�!\u0006\u001a>����D\u0014R�[%)�\u0011\u0014MCM��1,a��'yJ��LF\b�A�œhHz�2��ϻ}޻�,\u0016���hY�~a\u0014�k.��.q�Nc��\u0015�^4���C���������q��D�j�b���\u0016|f�4��/,���B>���7\u0006<IӅat\\oy���\u0010\u0014�d2\fW����LSz|Z���T�'��k�� A�p���э8�����;��ݻ{Մ�\u0018�f��H@\nR�Hy� \u0003y���\u001d\"I��&���~��˸����\"�yez\u0012_T��rѐ<\u0003�JLM�\u0006k-+s��\u001a�\u0016\u0005���\u0019��l��J�\u001bA8w�\u000e�Z+�\u0019\u0017�\u0000\u0016�f�*�F\u0007ߜ��|�(t\u0018%s�}�%�,\u000e����X}~�\u0014�&\u0016;�e�����n�\b4\u0004}w�򷻐�RxZ\\\u001a\u001c��\u001d����E���gn'gO��$-5��Ğ\u000e\u000fc]��q��0\u0007J��؇��\u0012�4�y=��\u000f�V\u0015�\u0006'�Z�Yd�I��\u0001\u0002Q���2�E�\u001fSڼ\u0000k���\u0000�\u0011��4ɥ�g\u0004��\\E>��$ڊ�:�.\u0012@�\u0011v�DE�ڇǕO�|��n�h�z��[\u0002��.D*�\b r��K|m\u00161\u001e.-\u0000`[� �\u0011\u001a\\\u0012`�!9���%N�j3l@��5�<���|��\u0012ќ\u0003�N\u0013��\bE\u001fn�j0\u001b\u001e\"�A��_%��#��Sג)˖ ���7z�W��\u0003ˢ�� T/_�s2�Ş'2�d�\u0015���\u001c\t?\r�]��\u0001a�\u0010��\u0010u{\u001f4䈇�-B5pj���8�1)��d7y\u0017����\u001d\bC\u0004s�����B\u0017'�\u0012$�\bW�;\u0014\f�\u001a.�\u0014!.�̙�\t��\u0010Hi��.,���J(@�0��c��8�\u0004\u001cZ��]\u001b\u001c�\u0012\t\n����b�g ��\u001c���\"��^�1�j���*����������G�\u0007��ʞ\u0014�����i�#\u000b׵d���/�\u0013\u0011ǘ���6\u000b?V��<��S���Su���)��\u0002\u001aҨJ��Z\n����j��\u0002�<_L\u001c;\u001b\u0003�'\u0019�~�܃�L��w�٩a-��tr�\u001fY؄�\u001c\f�6�{\u0013\u0007\u0015��K�[\u000f���Gk��*�����4\u000e��>J��\n�\\*aʲb/���\u001aO\r��\u0012A?8\u0004�h�8�\u0016�+�(8v����C7�9�5�R��y�\u001a[\u0004@P�\u0005\u0018�0��R��H�\u001a��#?�ȓ3��츊�2�R#���_\u0001\u001d�����\n�$�/�\u0001��\u000e�Ŗў�&ѷ\u0016\u0013N��I�t�]ɻE[,\u000f\u0010`b�\u0018' ��E�\u001fr���޾;[G��gV�@��'U{0��u�\u0001�9+_��Y_u��<��p\u0018��ǝZ�~�F�\u0003��q;���leTP�o�d�\u0014u\u0005v_�%TB�2�O@6�=�LO�\n���?U3.��]��'\u001a̻��(K��|\u00150l\\�\\\u0006oq��\u0017\u0017\\�\u0000���\u0003N\u001d�&\u0007u�)43�\u0018� ��G0���g�<�N5�/ɣ7v�A|�\u0015�ӄN\u0018n�@�&��\b�(�ҟO\b!��x�8�a�\u0016\u0014\u0006�#���8�����PI����Ui���hbQ�7,g��Å�n8\u0015'����\u0006�\u0018^|X?���T�-�pi�+X��P\u000f���hT�e�(��x�rC�O�}'�~̒���\u00070t��\u0001|F6q��0^��\u001a�\u001bYn��s\u000e�ί��\tV���´8)\u0010\u00106\u0002\u0012�\b�\u001d�\u0014~�?nP�lϗ\u0007�a\u0007���I��\"���[��|Viē�pܯ9�\u0000O���k�ׇ��eN?�E<V�6%���\u000e7\f��=``�\u001a\u001b��á\u0013\u001e�С�\\\u0005/�\u0016�ס��:�M�u\u0016�}��Z�\u0003�\u0001�V�0\u0003�^\f�eF\u001d\u0003J�De��[�&7�(Z�$Cg,�P2��E� �\r�[�\\�\\eLNb���4\u000b\u0015\u0004c/���\u0007\u0003�8b\u0002��K`�\n\r�kk�4�~�S|�+Ms\u0001\f�ϟ\f6��\u0007��`~@\u0013O^�\u0011�i\u0007���\u001b\u001cnoKt�\u0019p��t.��@,\u0001�N+��V�2\u001f\u0015����\u0007��j�4FJ�����ɹ�\u0017(D�rM��\u001e�#��=�]]�\u0017�l��\f���K��SZ�\u000fQ>�\u0019���k��-��6B1\u0013JW���_��q�\u0014\u0016+7̲%2k\n[�f�4�8�X��\r���Q�\f¼�~��;\u001dW\u0000΄rl�\u001b�tm��\u001aD\u001c�B\u000bR��D:�aR�+)K\u0004\u0018-H�T�՞���S�\u0006��o\u001b\u000e��[�G\u0013a�\u0005�\u001e3ڿ��\u0005(�_��\u0015�R�w\u001eq\u0018c\u0010Q\u001c6��\u000e\u0019\u0005\u001aˀ\f�dO\u001fE\u001e(��\nz�V]<V-���\u0014ܻ��+c��e��2}ʙ�Ѡ\u0014$���\u0004F��L�\u0006��\u000f�\f�����+�\u0004z��M*���\u0002�\u0003�5�`eHq\u001e��i�6\u0002��!\u0012C�$d�]\u0019�\u0002{�\u0017�\u00120j����MjZ\"��\u0001�δ�\u0004�\u0018�Q\u0002�`nq��v�$½�+��tbx�E3!\u001d0��_`���J���T��N�\u0011��[e�\u0002CX\u000e�\u001f�\u000e\u0011��\u0010Z�)K������m�5j7��A�������+�Q}�]'7\u001b���g�X\u001f\\\u001a��w�1�\u0001*��~��\u0010S�^w�Re��U+�\u0004[Q��\u001c��W�7͗����C��0BАד��g��\n��٬*ǅ�BW\u0015�\u0013������<]\u001aW�x��EQ\f��ҧ\\\u001f��u�0�=�\u0013�\u000ezӼv�AOg�\"�u����Y�\u0014����&Իc���I\u0018{���g��@W\u0013߭\u0014/W�qX&.�x^�_\r�ۈt@��&��\u001c�ۍ�\u0004�\twO��Y�3����\u0014\u0010\u0001Z��\u0019�`����e_2\u001a�\u0010\u0007\u0002��\u001c+��0&+C��$o�X��F.9�\u0016�=@��\u0019\u0005(\u000f'��-b\u0011��1��|��Á�5�\u001d�_,v��.MF\u001e��Ɨ�a\f\u0011�����{V=V|�Re�ݤw�O)3��ߝ��K�m!��&ҋ�U��L���p݅%\u000e�M��R���b\r���#�}�Lo'\u0012\u0006K|�,����̒�f\u0013`T�_�a��\u000bEɫ�@4�: �\bPp�<\u000b~5z\u0019*�Y.tPl�\u0002�\u001f��/����9Ag v~J?����\u0017b�S\n�69\u0011.�䄔|�s�o���\t!v!ɺś�&\u0003*�z3�6�K���E\u001b-A\u0003�\u0015n\u0000�)\u0013\b(�F��\u0014��m��\t#Fѓ\u0015\u0012!���\u000fM���Y@\u000b\u0018/\u0000\u000f\u0016�\u0018ܫO��!\u000eČ��K���QZ��^\u001f���0\nE��l�#KCdM\u0010�:\u0000�� �Ԋ�싖jp_�AJ�a\u001d�- �s��޿\t\u0012?cr\u001f����u��������H�.^�K$��!�~�E���\nh����HRǃ\u0015\u000bfTt�+���B�jC�=<�E��,�YA<z�&#�%�\u0006�\u001c\u0002\r���\u001bW�w|T���\u0005\u0019:]y��rH\u001b]�:�N�$\"}4��v)\u001d)YezI,�f�ù�5��5�b.�*\u0019�\u0011\u0014յ�2[�W\u0014A7S�\u000f��Шm��\u001b��\u0005��\u0017�s�0`R�ڂ����>\u001f!qD�\u001c��END\u00153�|��ͩe�Mvc\u0012V<���e�)�V@�Kq²;`�\u000e4{0�i�����N�}���jӔ���%�:Fm)e���\u000b. ��\u000b�c�l\u001c.\r|u�s�\u000e�BG\u0015@��{�����$r�3�J,��#��s\u001b����6Xrs�\u000b��4/��\u001fش'j-h�\u0018j��iP�X.D\fF�\u001a(�C�\u0012Ȭ\u001f|�y�ot=F\u0018A�K���w\u001cϖq�K!�RA#�\b�`I\u0007ZZ��\u0005�\u0011CI�Nk�zzS\u0017����h�\u0018�6�\u001d�Eh��)4l\r�{�Pz\u00049[�)�ɜ��`�\u0011jd\u0012�8\f�%�\fHk�vmCZ\u0018�h�~�D��s\u0002\u000e2�\u0004�.���\u0015P�M��vHU��B�r���,��$lB����p+\u0019�\u001a它B��}v�;��J�hYE��f\u0019��m���T��\b�\u0001�B&Z�G;X\u0012.M\u001bҡ��o������'�8�5�\u000e\t�����b@�\u0018\u0014\u0002i �$�%�\f��_ |�-\"����oӷx�k�'&q�R9\"Mf@�$�\u001f4���6\u0011rΐ���4W�F8\u0004$zB�\u0006��M��R磃\u0003�Nc�:e�?`�7mZ�d��(��}�e\nV҄�\u0005M��b\u0013�`�o\u001bD�o�Ԫ-j\u0013{��θ��H���\u0013\f`��Z'�\u0018�����\u000f\u001c}���$�\u0005u8枧9\u001f\f���x4y\u0006�k��N�c}�\\c���˖�|(|�����wB5�܄~\f����\u001c�9z���\u00019`�6\u001f\\�\u0004�u��=���S���c���!��Y\u0010z�\bA��b�1��T��6(��\u000b��=�v(��9�J�ԟ�>鱒Y%�\u0011S���0�6e7��z\u0005�\u0013�\u0002F��+\u001e\u0004'�\"��\u0003� �tM?��\u0005�a�\u0014�þ��q�\u0012oʂ��L�<\u0000��wq�b���9~��!s�c-�5\u0004��(?ǴT�*n΢�dL�SN_8������^�\u000b\n��\"Pu���\u0019��?�����\u0000K!���K0͞�SG3%=\u0006��Tz����ظ#{\fb<FN��΄��\"�\u0004a���fh5%ע\u0005�\u0015�\u0005��p��\u0012бj+!\t^�\u001e�\u001f1'r�Y��D�m|d\u0000\u0014� F�Z:*ބ��(�|;?/�y����ુ��f��\u001b:��I\u0016`C���:\u001c���2\u0018Y\"90���c���/�O6s\u0004I����\u0013�\u001b\u0007u�6X�wԔ�]9<yE\u0004\"+�KfG\u001a�\u0011�2�t��zڎ)��*�r*�`[�(��V�\u0004v�\nv��.o�V?R-�x�a\u0005�\u0015/A\u001b�ٗ@���\u000f$��\u0017�\u001bA��|3B�\u0014($�M���C���M�� �\u0015r�q\u0019Z\u0010����O�׈O$�8\u0001/Y\u0011� �\u0011��z��D���m7}L���Ab��sHI�;�3[b��:�B��\u0011@о�\u001d1~\u00019�?�\u0012����\u0002�\u000bƥ�FT\u0018��X�a�Se~�\"\u000b0`�~���9�/�*:\u0007wN(�\u0012Õ]3�7<��]���\t������#\u0014zW\u0005~s��\u0015H\u0002\t\n�׃�\u000b�J\u001c\u0007���yP�D\u001b\"~��7�r9*W6_��\u0011\u001aPjp�2�7N����l_���l\u001f8�qJP�\u0006�!ij\u0019V���h�\u001bN���\u0005ú8\u0002�f�JG��\u0014'9�}\u000e�hأ�e#��z\"��*�A1�\u0016�i�\bJ�\u0005�L�����3Z\u001d*�KYi�\u001e�t��}���~k���\n�#Y�j\u0010�<�d�j��\u0016��\r���\\Θ���^u��];\u001f,\u00021$�Y�ꗛ� �3�\u0004�j��\u001aq�(l\u0014'�\u0006���3�~��Yh�h\u001a�ױ.YYq�7�\u0010.���#��2m�]U]P�X����>�\n�䑾���\u000e��T[c�\u000bE\u001c��Մ\u0001�\u0001,�1���q\u000f�F#CeA��x3\u0001\u001a)\u0014�Λ:v�re�[\u0000s%�&��\u001d��.<��O,~(v���\u0007\f��V\t\u0000*�vX��\u0017x�h��\u0007��<\u0012t怐�?�K{�:Q��Pԫe\u0002\u0003IN)�[�#nv7�\t\u000b$���\u0003]�)<��=�?�V\f\\�<�I\u0013�G�C���-_\u0005��Vy\u0013�*Oӳ�{q��hQ��L5\fL!E���\u0003рv\u001e,��7������\u0003��\rь^�L�o��ω,�(սLqKO�rU��Д\u0019����N�Ϗ\"R:&\u000fMԏŊ�������\u001b�\u00042�p�o��\n.\u0019���\u0007�\u0016jd�\u001b�=p۹[\r��u��Ϧ�m�z\u0013�Pd��`\bu\u0001\u0016�96@wϚ��`��E�9A\u0005\n�ߐ4)�\\���HN�5\f'[��FQyfs[��|Y�7��\u001c\u000e\u000b�C�d7a\u0017\u0000���\bDy�`SH\t\\ ��\u0018�[� �\b�S� \u0003\u0017i����/%�\u0002��w��|s��\u001dPm��i~e/�4\u0005p�_3%u\u0012n^:��Ѽ@�,��7��\u0016�c\u0018���\r^\u0015�a�fMS�W7�\u0015���6je\b>v\u00045�:���+�Exvؚi��z\u0011�?w��k\\�ع�01c�\u00106!\u001fch�u���0��|?(��\u0013����\r\u0003��Y���3\u0005-D]f�G��!'Ik�d��P�q}Z�$�@e\u0013ٰ��(��\\(����Ibr辒\u0004�����LM��72\u001e���*��(h\u0002^\n��<��6�����\u0012y\u0015=�Jy�!˧E���/�i/(PQ\u0015�\"uQ��IyC�\u00140��D�<\\yVO�p���u�\u001cm�A6���c\u000b\u000e;�&S�����u�6��!����h����ҋY�\u0000��zP\u0002<12/ȿ�7n�\u0007�]���W*V\r�o ���}ۣ�+�&�8�NoQ\b�=lb~m�\u000bsv���\u0012?'��>��\u0016\u001f�\u0014C�q��9aw�f�\u0007�j\u000bI���/�\u001bx��7��\u001fy���ߜ�\u000b\u001e�\\x�[�F\u0012Z�Pj����܌6��5�^�P\u0000�\r�\u0005`�]-E���\u001aCg\u0003[��\u000f�i��\u0017w�#�G�Iy8��D���\u0002�T��\\�&.\u0001F�APN)\u0000{�\u0006K^)�M��u�сU����-��x)l��\n�K0\u000e�n��Vi\b\u0014����x��G6�B\u000bwx�.�+��RGa�\u0007zBЄ�B��\u0012���#��\"+񥂰�=���AĽW\u0018\u000e�_�7fK��\u001dV��K�b\u0019���[�5��j��?�h��\u001f��F>�<�\u0002�(�gy�\u0005&]��ˤ�KQ��\f\u0005�'\u001c�\r\u0005s��rnX�۩-�q*tR\u0019b}�R�Na�\u000f���й�0����~&B�p�4�f�p)&�O�3\u000f�\u0000O%(G*6ח��K\u0004TQ�K�딙EIwL�ݫ��\u0013Cs \u0013�f�`!�V\u0001�jKR����*�\t^\"8\u0007AH�s�\u0012����8�\u001a8��\b�!PS_r3\u00119T_Y.8ro���\u001d�7^\u0012�9���/��\u0019\u000ei\u0001��d��}�\u0018c7�\u0004��1\u001b�\b�\b�\u0004I2�}���˙v��=�4f�,�]G\n6O��nh)\u0019.ą�$�:��u�͊��\u001b#\u0016Lr��Q\u0010�\rl1)�\u0012j>\u0018\\\u001d?�B*\u0007��6+�`{\u0007�&�޿�\u0010��q�_�T4�{�Jc�\u000f=߃n��\u001e.T]�Qu\u001d��6�֍\u0018�O��\u000f���-UU�\u000f� ��\rҟ�1?�췏S�\u0012q\u0018\u0002\u0003R6\u001cm���\u0001:c�D*�م�sR���5{<b�1\u000eN�����Ň&�\tv7�Bl;�0�\u00065��A~�&��;=�\u0005�K�4\u0011xɚɉb�e\ru\u0011qnIE��s\u0002�@7�\n\u0011�\u0002���.�D\u0019՟?8��\u000bF����n>\tT-Zx๋�\u001cvj\u0013\\D�[3\u001e�\u000e[�,\f��%s�\u0016�a�Ȣ�;\u001e�\u000e򲸢��\u0014H��\u0004oV��\u00105\r�<�i\u0014�ֲ,�\u001aykRRqQ�ѣposa�'˸�G�v�+a\u001d�\u0010��,�t��\u001cr{\u0019�Srk\u001f�Z[հm�x\u001e�r>p�[�YW�\u001f��^o��.@��\u0007[_�Dq���͈��\u0007�\txnhy-\u0010 m[j��'�5�]!p\u0018��)^κx]ur^�\u0015a����`\u0012@�;T|)9\u001f�E�xq��N\u0002#��4�t��\u0016�AL�H�{:��\u0019\u000e��\u000f\"�\u001f�R\u0003��\\,��\u0011׻\u0019�G��{7��ޟ�~���\u0003�p'Q���/s�V\u0005n�ѕ*��c��)�j�[���ܯ�F�M\u0003O�#nA���{h����!�ga�aV�\tg��r�{3�{��`�M�\u0004�k��&���K\u000f#��*?̲\u0004���U?���X��͆�9VFE�\u0017*\u0016'����\u0010�T���\u0002\n8�\u000f�{!\u0004\u0018�2z|EM@�:\u0019\u0015��(���`��&�#����=L7R��\u0001�{T~U���[+a�`�\u000e\u0003\u0012nrX�rcI-ɣ\\�0f�\u0018��\u00055Uz�^��\f�\u0006��$��i�8�uL�'odk�F㎊�\u001a����y�X��_�d\u001b��B]��q�6�\u001f�7\u0018�*\u0013�2!��0�D�Q1c\u0007 � <]\u000f���f���L?�+Դ�\r� 4�\u001e��8\u0015��\r\u001fI\u0003A:\u0000�\u0019�`�僯������\u0016\fB�\u0001�s����2T�5Lu&�ڕ\"s�9\u0002�\\��o9⿱�an:�-��6�HU9lj�Z\u0013��7Wò3ec�w9�4cJ�{�A$�Di\u0013Y$\u0011���-�\u0010�G.����܉x>ǝ� �4KO{=�[�<o��Չ�N+�w\t!\b��Qa\u0017ъ\u0010 ��)\u0011Y�(Hm�b���0�\u001bF�s��C��b�f=f\u0016[&�g={AF�i/��)�\n�N\u0002���M��k�j��\u0018#t�ڑ�U;�\u0003O��׍\u0012����V�D�݀��C�V?/\u001e*�O��-Ô:�|q<\u0015�L�\u000b��#׵N�ߐ�S�}�hu�\u000f�\"�L\"J]W��\u0014t|�a�_}d@��\u0017\u0007�IG��\u00008B�BkZf��}����ɇJV��W7��.�8�~�\u0005���e/1�����'��(�ؖ�\u0002G\u0014��w�i�N��u�L\u0004���-Ffl����Fgn�Z���<�\u0007�o1ĐS���1Ct��\n?/f\u0015���yW�����\u0005\"۲#\u0011a+�a\u0018�'C\u0010\u0017�! ��啱#ޗ�p�JU���R�S:�\u0012�}�Ԃ��k\u0013\u001f\u000b\u0002��i#�/E���P�|��\u001d�B\u0018}��>y\u000bg����\u0007\u0006����\u001c���{٦_��\u0004\bL0t\\k\u0016�e\u0002;y�����@R��3\u0019���K�;�\u0003b`[O�;B5;]��\u0012\u0000��\f�嬺�~R\u00113:M\r[}�(\f�WO�7r��l��O�y��\u0007>�@(\n�{���2W��\t�\u0006�O�?�7/X+��Lr\u000f%m�\u00108\u0019�H��cG[{�N~\u0007m6n�IҜ��oN��[�\u000bl��\f-�u�:ffS=^<'�\u0006\u0015)̈�'�H\u001a���;�Oo�-�\t�%�]\f�@\u0017�t\u0006�\u001e�����˃\u0015�6�蹿�\u0004^\u001dt!\u001f�-��A�M\u0001\u001b\u0011Չ9WA��A�Y\\�\u0011����,x\\W4v�K�U$S��R2:�!T^\b���o�!����j�Q$��\tC�y\fڜZO3�\b}PS�Jra�s�\u000e\u001f��J\n\u001a6�NӰ�¨\u001cwzMH�\u0017�/��h�\u0001X���\u001a|~ \"�����g;c�iWw:���p-y�\u000fh\f�\fܜ�\u0012F�;\u0014\u0012Cu!O#�����ֳ��qj��P��\u000e��)�\u0001�V/�`�-�\u0017\u0015�I\u0000�3���X\u0003~͡\u0017.��gwJ��\u0019\u0018-|����8�8w|X`\rb u�Ѵ2T�B\u0014���Ȉ\u0004�\u000f��h&M�j��)\"���T����\u000b��Ѵ��6�\u0012�q˞��m�Nb_2A;la���:���?�/J\u0010-\u0007��\u0010���=�\u0000;\u0005NA*f\u0006��>U��0�D�Gcۧ���\u001fO��l��Ky�_�iӜ\u0016����Х�D�wl�8\r\\�b�XW�pS���,�\u001c��\u00025��Y��G:�\u0003ZR5$�Ħ�G\u001a�\u000b�J :�\n\u000b���\u001c�:.�\u0018樫p\t�u&l~˛@��p���j�\f6��~\u001f[\u0006�\u000b�c�6��?j�(:�db6؈�$�v#��Umo�^XUOb�9��눽O�\u000b���3�kY!�\u000b\u0018�\u0003�.#�T ���Q�\r\u0007\u001b3���$y�4�{Dv�s�\u0002`�c�g��\u000f�/C���*�)�?�Óh\u0015��ä\u0003\u001cae:�\u0018�$�{\u0003���\tAm�P����\u000f��O�!�4l�r�`����x�Gc{\u0014��7eu�Җ\t\f��eX&�#G�ޢ�����#w��\u0006�(�(���O02\tv�F�YN#�q��<\u0019�j��\u0014J�f�>F��a��\u0018�!\bw�}�����PԡY��}7�k�����E\u0013'Q�����W��\b�Lz�4\r�\u0016���~�� \u0010���Z�\u0004ܸ\u0004\u0006�\u001b�r�HF:X����\u001c�^,�b�\u0015��u5@9��:�R\t��uQ��B���\u0001�A �����o]~�ԓ#J\u001f�\u0015���\u0001�1^\u0000����\u0013q���oK�a��xi�\u000b@ph��)&����m� �@��#�w\u0014 ,���$y������T\nU\"�\n0�\u0010\u0005��'�Q�`���\u0018̂\u0000�š�\u0004�K�\f�\r��\u0005;����3\t�Ŧ�I@V�eıflJ�hE�&\u001c�+���u\u0003ӛ��n\u0006��Ͼ��\be\\�a�\u00167<A\t��d\\�-��\u001d��,��X\u0019��\u001a�\u001e����\u000f\u0003�11�^�Lڤ �\u0002�~�V���\u0003�����C�X�^[�~~:�I8\u001dj�^G�\u0019s%rK/�|�\u0003�]������TEbѱ�xT\u0019\u001f%\u0013��<��\u0019@NT��;�]c�\b�\u0002E�\u001d`�1���\u001c|�k\\/\n��*�T�?$\u001b��\u0017Z\u0018d�����Ù�j�-ʠ\u0010�hS�$�l]-g�\u0007M&��xN�$\u001eT,%�����vv���\n��~���:�8�b\u0013�ƻn��e\\b�7��?�Ξ9a�p��X�Ġ�9�-��{�\u0011��L��d\r\u0010Y���6�̽��[\u0006?�\u0012\r�G�7�=�+��o.q\n��[��\u0019�9�\u0003\u0004d���ϲ�1��D�Oߏ��\u0015<�f\u0015ԯ3`��\"�}\u0000��'IYGy��\u0007r�\u0002[�v�����yX�f�\u001fҨC$}�I]�\u001a�s�{��1M��*1\f�\tG奕%8�zHH7�L�E\u0012�\u0010��\t$.\u001b�:O�]�0'��tj��Hq\u001f*�\rgn*�`�|�\u0002�VD\u001f�0�.C\f�Q�\u0002L�y�B�����՝դ��Y3mފ��o��\fА\\��h\u001b�Z�\u0016� �?���:/k���\u0002�v\u0013Jsr^��-d���L-�H=(:��P�uo��/EZ'}��Rs@j��\u0016��G�3'��WLC��}\u0016p�\u000b��0\u001b[�\u0010|�x�~\u0002\u0002ϯ3�<e��u�@���`Y�|������Fa\u001e�|uю�\u000b6u����(?�z\u0007jJ� TG\u0019\u0011l��<���B�ORq\"��$s}G\u0015\u0016ޣ�\u001f�\u000eG\"\r����,\u0010�ӝ����U\u0016K\u0004hu\"5�\u0006\u0006\u0012�`\b\b�ᘧ�(\u0003��m\u00171\u0011{\u0004����Y@\"�6\u0013ҾW\u0004��^#�\u0002��W7n�?B\u0015�z=��\u0015ڼp��)\u001e\u0007@]縸n\u00052��-�\u001cg���\u000e���\u0019?\u0018�y�d��\u0007�UL,bЩ]���4Ѿ2u\"Q��V�p\u000e1l��B�ѷϏ�lOD��W\r�\u0002�ȣexȾ��\u0019�e���?\u0002��p���_\u0002V�Ī`�7�|\u001c��\u0006�\u0003������\u001a}����G�`�L���1��Z]�<�+z�\u0003�I�1D��Ź\u00152se�+l\nbb�[F̟gs��\u0001[�޽acA1&�Vg\u0004��\u001d\u00125���ؚ��aF3YQ�D���*\u000f�\u00120�� �\u0015�\u0014���MG,\u0017^�ܐ�=�\u0006']�\u001c�k������$�C[���C�\u001c�S�sƊ�ߺ9=Z~w*�{���#��a%���9����@5a)d��XĻPUW٠�$�{$`C����:7w��l��?fܩTs晹\u001c�o�\r��I�q\u000fi��B��\u0016�I�ͥ�O�<)�?z��2�\b�n-10\u001d\u0004ilܵWX�U���\u0004���r'�`��E��i/1zs�i�ߨ����\\е�O���e��\n^\u001f�#r�R��ѹ���_���bm\u0017Ku��U~h[�u�y���-�\u0019Z��B�\u000fIoJ�\u0010D��A+4\u001b�`\"�]�\u001fSn��L�݈4?\u0019\u0003��\u000b�Fb\u001f\u0001\t��O�\u0005G�\u0006�\u001b�T�荏AھU�\u00067\u0014���y��؂\u0001iG�l~+��;��;�^d��𥛀\u000e��ؾ@�`���f��\u0013�-3�?h\u001a0��!꤃>\tM7�ؾV\u0006k\u0006=��\b\b�U\u0010��{J��Z\u0004\u0006d��_u�ّ�\u0017�mȪ\u0001J�=y\nC!\u001b�SQ���Y�2�Aw���5@�\u001f�;��XG�*p�\u001b3(se��D\u00189긤:�`\u0012�<sfd+�\u001c\u000e�\u0018�0��d�kBal�?�q��&�l�g�ζ@W���L��*�����~j,���M�\u0003�o�_�\u001dL�Bi��\u0015�J\u000f#{�Oͳpv���_���\u0018l\u0018v\u001bu�eߨ�r��\u001f2X��\u000f\b��\f}��P�aJ�sL��' \u0017�U�&^l��m����+\u0011��\f\rB�7;\nj(����{]�\u0001;��AB�|3T�W�8�p�k�)\u001ei\u001a��Cr\u001e�<\u0000q�df�q0��\u001e\u0016��X����C��H4�\u000fFxv\u0007`�hq�Ւ�c��8z$��\u0002���E\u00111��4�ڋ�\u0011T�\u0002SL�X�P�[eOA9&h��s�6J��K�3\u001e;9�\u0001�dh�8��ؾBHC��W�LǃЋ%�uAA�\r��)x_(�?W�C\u0002)�\u0007\u0014\u0004����s�\u0000\u0013�\u001b��j�O\u00118�}8\r�}p�\t�aуh�\u0014\u0004��i��\u0007˜�\u001ek$�M՞l�6H�nn�\u0003B�[j�S1k��\u001c�����!�p�z�;u��Q�\\ְ3\u0006��ד��W̏�\u0016\u0003ŬKl�a榄�R�9M�G��'���q�����^p\u0007f�y�[����eF\\&wl����\u0013�*��\u0007A�&��,�9/�\u0014Q��\u0019�,8\u0004�\r\u0013��R�i\u0010�S���c�,����)���N[�>���%���/���B\u0013\u0010c�'�����\b����\nZ^\u000e�2<L7z�?S�L��s'r\u0004`�v�\u0001;\u0007\u001c\u0017xz\u0004l�R���q̥�hGE���\u0001p��f�ѥ��O��ѩ�&(\n�^��3*\u0007/��Z?\b��\u0004\u0010�\u0007���*\u000e\u0004c�`\r���\u0014{:��<ZE�H�e&\u0002q�::�]��.\u0011��\t<e�ED��C٩���\b��?\u001c����D���\u001cAП.]�R�J<l\u001e\u001d�� j\u0000�\u001a|�\u0018:���\u0019_s\u0014Էb��E<����Q$���3�I/�]\u000b�<�]\u001c�'x;t�����7�Bc^�z�Lc����\u0014�*�\u0014��h\u001aT��k�p<;KX����@0\u0006��\u001c���T?��ၑ��.\u001eщ6qd�i����(�4��D���.\\�\u0013�Y�L:\u0018.+��4�����mE`\u0019�\u001b�Q�J\n�\u0013�>5��!�7��oՎ�\u0001ǢO�cB�JyP���\u0006k\u0018���ghw��\\���O�ͺ\u0005\u001c\u0002Y��EFŀ�\u001f��%z��^\u0002�\\\u0018S\u001c���E�U�ZLF��s\u0011\b\u000b���\u0003�\\���\r5�E\u001d��\u0004<6�(KE'��Fm���C�\"�l�#�X��\u001b,\u0011W��č_F�r$�e2�\u0011F%S����$0K���\u0017�ى�H���-wC�\u001d����Ȝ7d����-I�ό���D)\u001f��ƅU�?0Zh�\u0017��җ>X+�Y�\u0001m�l�$42�1\u0003U*U�{@�8�!N��H�`�\"���6p��I��z��o��\u0016��\u0012�\u001f�Қ U���\u0005/E7W\u001a.��R\u0000��}$6��\u0017|\u0019n4�K��gf\u001b�\u001e�lG�*�� ���5^[�F���D���ޓ4z�\u001e\u0001�\u0017ˆ�����)�Tҿ\u0007>����^t\u0011<���\u000bbIOq@r����\r1�t9X��W�Ds�ppWz��U.D�N����\u0017\u001c�fwY\u0012X~�\u0002!��Sn��\tfd\u0005��Of����\u001ao��\u0000�1\u0003Z�<m�jd\u001b>u��A\u0017���yg0MԼC��\u0007R!gaxǐ��x�\u0019o`���\t<��A����6A�\t'�\u0012�s%�b59\tP�VC�)#�\u001d%N�7\t�X�ޱ,dv�\u0010\u000b-O�ߺ��!?�W����N�˭����8�vʺ2W��5�\u00135��9A6���UH�'��'pYl\n�z�\u001b�7{\u0006j\r|)m�L%��{��3�\u001f\b/�\u000f�j$�$~A曇\u0002���FێO-�\fT^t�\u001d\u0015\u0006��~�{-<�mo�a�\u000f��߮U��(\u0012�\t4\u0014��\n�~m�]N�}��\u0001M�d\u0012�bT��\u001a�\u001ew�6���@\u001aW�<�\u001c�.\u0013�\u001f�]�5�m�7���\"��ϙu���|L&hC��T���\u0014�PfL6r����i�A7\u0019\u001b�q\u001a�d�\u0010�\u0001�\u000b��ֱ)2\u0004M����M\u0011��eF|�Q]}V&���G��i���k·@W�S����r�ѥnW��r���Q���\u0004�:�F��G��O��+\f�j�\u0014�\u000b���3\u000e�\u0006�K)�\u0001o\u001d�|7/��pX�\u0001�kO\u0018��V\u001e\\�5w�sQ�}�Y�e��  ���-�%�o~\u001b��\\����Y��;���\u0015��'��\u0016p�o\r?���ߗ�7 h��]�G��� C�e�\b,\u0015��H��� �Q�Ҏ��\u000e�� 1����O�I��\n����Е��\fe�X�֩\u0006���|\u001bQ\u0015\u000b�oHW��\n\u0006�s֗�l��/����F�ho�8�\u0014C!�A��n^��/X��1!R\u001f���\u001d�ϦU�;�r��\u000e���U7ףF\"Ԛ\u0017r���\u0012\u0012-�\\*\u000b3�l\u00059\u0002\u0018�\u0010G�\u0002���\u000e���G\u001d̀�<gH�a\u001e[-�T\u000b\u0007}���L�\u0014\u0000�\u0017�=�B\\�`���\u001f�U(3��R�\u0002� X)�kA\b���K\u0010�[�8\t��Ǯ�Kj������������\u0006GuJ\u000fn.ѸפQ���N�\u001d���\u0010&�0a�ķ\u0002�\u0005T�RFn���_?,\u0013\u0019%��*J�\t����m\u0014�\"�9\u0015n&Hʼ�㝭���$h\u0004�S��v%\u0017\u0013\u001d.٠�pqM�L�T\u001f�:�l\u0013�:`�2Y�`������\u000f�J�\u001e�&�e\u0000�aM�?Wx�\u0013��}D\u0006��x�a\u0006��\u0001�/��ɱd�Ŕ�5���k��j�R\u001djH��\u0010py�\u001c'\u000f�UQ�\u0010B���X6�w��T�)��\\�5\u0012�����\b�\u0018\u0018�ĥ�\u0005��u���+�\u0014���Z}�SǪP\u0011�v�\u0013o�X�ip��c��\u001b�R\b\u0005o\u0017��\u0016��ӥ���\u001f�I\u000b\u001c�\u001cn��;�M�6�t\u0013��\u0004Pz��\u000fj�{�\b����Ã��7�\u000e1C*�W\u0003o8:\u001b�M)\u0010bH��6ߴꭸ;\u0010��U�p�Z�X�\r�\u0015ki\u0005\u00126\\0��_�ق\r�\u0019��.�b.�hE]�ҋ;.q�n�r�����R\u001f\u0002LV���_���FvO\u0013\u0002�YH\u000b�?9��!������\u001f\u000bH<�Qwѣ���]�\"��qa�\\2\u0003uRG[�IJC]�$�����Q��\u000f7���ϋC�\u0000��\u0004�=�C'y����\u0019,���\u0013������#.�;�ؿ�|�\u001a���W���F�q�-{LQ���\b\t\u000f\u0016�sQZ�&ф����v𓩻��\u0019�\u001b\\��:�I\t��\u0012?�y\nW�v;�^S����{6�e��3�ɫ�?\u00069�y@�\t�P�)؆�ʿз�$\u0001�K8\u0002��u9\u001c�fg$Wţ���B�*���x忋\tSk\u0014�E\\���=\t֩ �~�\u0011��\u0019]@$�~t\u0003��A&R�B\"�#�-��OU�d-\u0002\u001d5S��ԑ�\f�#\u001b\u0018,�W\u001e$\u0003�=\t|LԸ�)�e�\u0001H.!B4�\t&�[Q'zST\u0014-n'4�V�ʜo�a�\u001d�\u0003�t\r�-=��aC�\r\u0016��\u001f�\r|`�X�$&�:\u0004��]�%�H{:��U�\u0005��\u0010��{\u001a\t%�g�\u001c�̴�����\u0001�u\r\u001dÒ�kٌ���\u0014\u0001/���*��\u001cտH=��\"GP������|���G�]y,�\u00146G\u0012;r��)�m��\u0014A`��]zr޽\u0014f�M\u0000\u0005�-�,�Ll\u001an\u0010-��e�3\u0005�\u0019�]���u\fzr \t<\u001b�=\f\u0003�\\�����/}\u0016qY�|\u0007/�֭^=y��Z\u000ev��\u0014\u0011u� c��\u001c\u0012�y���q�S�OYIoc\u0001�w�l�Fb\u001bĴ\fn��)�\u0001�u����9��m-��S��%�֞=F�Qt{���3ܒ��K�a\u0007k�\u001b\u0013&O�{\u0014A��ߟS�4eu'�Tx�d{\b�q\u000e���d\u00106In���%�L)y���I\t���\tZ��\u001a�W��o=���z�$}\u0001h�y�%.��Oo�R��߉t`����驹��S���+���\u001f�@�\u0016.\u0007X]�\u0019���K�r�5�ړ�k\u0003�9\u0006!K�?�7R\u0019\u000e~i\u0004O��8�\"\b\u0017M7��ex�G�I��C\u001eg��\u00058l\u001aR�}\u0013+�>\u0000\\m:����3\u001f���=�w&X�\\�6\u001a�˾�\b(\rv�tz\u0004��\u0018�\u0018 vB�G{\u001dA��v0��;\n��E�1�گ��W!/\u0016m����M��ۙJ�W�\u000b��e��e\u0017\u0004~��Y��\u000b��ޔ�Љ\u0014\u0010�\u0019�ϵ\u0017��\\\u000f_��xlU9\u0012��\n���P]ΐ\u0016\u000f��\u0016�=�5�S\u0017���)��rQ;9F�\u0017�\u0006��B\u0011�a\u0015@�S̢ �*�\u001e}�}��e�ۈ:i_�q�\f�*H\u0010\u0018�y,�n����T��k�.�F<��_�M�\u0007����fL+M�O��A\u0002t\u0002�+!\u000e�|�2�QG\u0006�\u0006@\u001c��\u001f���r�$��H ڒr\u0010\u0006��X�<�Oz�f���������]�\u0004\\;S�Wkc߻8x��Iǳ\u0017\u0002��\u000b�q���Q�׶�Qc�c�w\u0005�uv3 �I]�\u0000��F\u001cq��\u001b_`�<\u00137�JR�\u0005�\u001b*�q���X�j����\u0005&\"\u0007*��\u000b���\u001f���sFAW\u0016\n&�\u0002���D�\u0018t��\u0006%\u0005�\u0003�oҳ��\u001c\"�X+�\u0003Pi���=@\u000f�g���#Cvɏ��P\u001a�\u0012�i\\5�d��.gH,���7��x�\tα�51v�j�&(��#�B\u0003�N3��� ��fS�\u001a�$�\u0011α��E�\u0016m���\u0000�r�(��NAWd�\b`�zN̸\u0003�\u0014�%c�ɉ4\u001c\u001fm|M\f�\u0018vqdq<��ҫW��~#\u0007�C\bPk~/�k(\u001e�����`-��L�5d�\u0001��M�[\u0007�\u000b$צ�8\u001d�e�s� �\t�,\f\b���N��Co��\\�`c\u0004�C;\u0010D\u0011Kb�}���_��c��P\u001c\u0013�/\u001em�흷\u0000�r�\u001cL�C^��\r-zO���F�\u0015vʹ)��ϛ�?�?�G�t[\b�O�\u0019vHG�&��r\u001b$/�\rv�T�\t0�\u001d�\u000e�@�r\n�E���\u0019j����ѓ7��(`�2��\u000f�0\u0001x�G�{\u0007�Y$��y�x�R�����7��\u0015��u�\u001a�2�nȯ�\n�6\u001fC�0<�L��3\u0019��i%\u0014�v^���~\u001b>��5�uSd7\f\t�fsx��FC��D�\fƮRݹ�_�\u0006�\u001c�ٞ\u001d)ΒͶ9�3a�.e\u0010&�x�L՛��\nEr\u0011y\n]pL؏�9��43c����e-��fc\u0007��\u0016�$�ݼw�rɐ����LH�\u000e�\u0011c��\r8��4�\u0019o�9h��o��H�ɧq�\u001d��\u001cu�\u000fP\t�G�g��l�u��4��L���,`��͟&���^��ނ�pAtר�\u0013��)�aZ[Pcj\fjA���L��\u0012\u0006.\n�Y{�r;\n\u0006�\n�\u000e�\u000e\n��ˈf<�9�9������v\u0003V\u0017���� ��O��0\u0000�Ͷȴ:�3�\u001e)W�-�\u0005��\r���O�h����5�C��0�\ng�Y�[\u001b��E�\u0010��,Ө\u000f\u0001��s�\u0015�`����c\u0010g�>?�Lhc�I��V\bҳ��\u0013m\u0018n����\u0013�Gv��{C�\r�y%�E\u000f�nY}�\\~�V�5�'i�Ҭv:���\b\u001e�?R����x7HGpVWb�BH�d���B[^�ܾi\u0010�ς��2\u0012���\u000fk�xn#��% �yi��\u0018���ߗ��Cf\u0006-\u0005fB#���=2�$�\u0001�����?FIX\\r)���J���.:�6\u0015H�G\u0003�,yӉ\u000e��m���\u000fߌ�I��J9\u0002�\r\r\u0013�=�\u0002+\u0010z�!����Z�82^�=�Fz��c7�\u001f\u0000�\u001b��x[B�H�~��\n�b۶�\u0015\u0015\u0017-m�+`.\\�;\t\u001f@��/�{JT�\u0010�v�%���ĉ�\u0004\u001f\u0000\u001f����[�\rg\u000e�wc\t�\u0002)\u0017W��(\u0016\u000fӴ}�΂�b��Ϋ�\u0016��$}�\u0007�\u0012�,�\u0019����h�s_\u001d��]���pH\u0007BXa8DO�^�4-r�\u000e|�e��~�N�^Ҥ��\u001da�0I=��\u000b�R�q���g�-\u0006\u00189�,��}\u001d�]����x��dVe\u0000�\u0000G�*�\u001dS#�bv�'�\u0003B{9\ne�\u001cwP\u000b��h��9Ŏ�����>u��8�6�!��\f�\u001b��6�4�V�y��-7�u�A\f\u001a��W���;92'���{oi��CL!�l R�\u001b\n)���\u001b\u0002�G�\u001dk�x�ޗ-@z�S��tι�[��L,���[��$\u0005A�T0�~��j�:y��e2\ns\u000e�o�>�^�A���8\u001d� ^F��u\u0002a��\u000eHO�f&�2��`H���ֳD$etui��J0���A�V\u001f��\t:�Gfh(���{*�ؕky�y\u0014\u0011M,���\u001d\u001a��[l��\u001b��0D#�\u000f�K\u001d��F\u0002��[\u0000\u0004I���\u0002p\u0013\u0014����I�!a\u0003<���\u00152R�\u001c�e�t�O�\u0010_��)]n�#�\u0012�K�U\u001a�a22\u00163\ft���_��ۈ<'XB��E1�-\b++����:z�\r����\u001bm/������\u001e\u0007\u000e0�]v��\u0004��h{�\u001a%�T�7�^�61�'��\u000f\u0003�\u0002�u<π�}N\u000e*�X�\u0006H\u001e&�L���\u000b\u0014�\u0005�#q�Ҝ��\u0010~�v\u001f^��.v�&���\u001cĎ\f���\u0016�\"|�\f\t����$I}�+��)���0��Y\u0001���\u0010�z߱���_\u001eӜ�\u001c�K�K=q��\u0002��b%\u001f\u001c�\u001aߣ�\u0011/�φ�YL�!�\\5d��nC=h\"r�\u0000���?�Ws� �[O=t\fR�~{��rS��(v^�>vH\u0000d����\u001bbƞ�\u001c�z��û\u0006\u0018�1;�>SOo[&�YO\u0016�n�6�C��h��=�\u000e�Z��m�Ԗ'~Ls\u0012[���b\u0015]�\u001c�/\u0001\u001e�i%���\u001e�����)\u0011C��I�\u001a*�7. i2\u0010\u0003kxP\u001bR���X7�m�CT\u0007�ˁ�lL0�$>Љ2�\u0005��+ջT�p\u0010��n�#)@���#�,�����d���7EA�(:~հw��W�X,ߣ������\"7�xRu<1\u0004�Q�������\u001f:�l�E\u0005���W��e$\\����FQ�3[\u0011\u001ca�֔��\b�����\u0015yL(�o\u0013��3A�����\u000e�\\U\u0016[���-����\n��rI\u0004�L᯶�>E�U�\u0000�y��eK���&BUI�\f�a���l�jT\tI��ӊ[e�K�,D��QTj �y��X\\\u0011�𳵪e��؅���P?�X� L��r���g��/[��ADm�\u0017�!e�:�n�\\W�T��*g,��Al>��Q!X����1���\u000b����`C��\u0003�Π�Ք\u001bn����\u0013����9<X�\u001f-�cR+�e�t\u0010v9�\u0017s��J�\u0001���q���\u0007ϊ�Y?�����\u0014��p��\u0005�o�U�\u001c���v�{\u000e$g���b���\u000fv��\u0004�o\\\f��6�Krt3p\u0011ם�B�\u0001�z!H�di�\u0019��ٗ OB<�u�\u0016����1�\u001a���\u0015�Y\nP}3�M�O\u000f��UH{K\u0000�\u000b|���ru�g�԰��$��\u0007r�����!\u0016��}-��\r}3�ή�^�\u001dN\u0005�x�;\u0003\u0012V�H�7:\u001bp���� �����Ѕl�[лU�,=l����4+�\n�k��%����>��\b\f�\u0015tVA��<\nhR�cGaz\r����x/%��b��\u001d\u0011�7>kTմ�NK��\u0004�I��t�Օz��/EG0l\u000b�B�P�\b\f��p�kB(9m\u0011�P�@�\u000bZ\u0001�\u001be��0:̮\u000bj�t[6�؎Z#x�!f���q�~iۻ\u001b��  \u0005��u`X �\u0004�z��\u0000�\u0011\be�\r�\u0007\u0012O�7ঈ%~\u0007�����u\u001d��1���s�F�9\u0000�\u0014�'�MH�ޭ��\u001d���l\u0017\u000e�tP��I��\f\u0014wT��zLG\u0018�\r���4M{s�e��&L��\u0010|�&����\u0014gS\u0015���f�Q��[\u001dj���B\u0016�����W2\u001b�]عJ�A)���#\"\u0018}�܌�\u0000�\\bjM�;��o@�Ʀ�],�\u0017�_\u0004I?`&\u0006�k9Z�ìl�޺�Ϛ� f�74�(�\t(��\u000e\u0000ͷ\u0017n\u00066����B�=�N&J.my!�\u0000��*�4�+r:�P�l�w�\u001b�d�\u0010�L�Ɯ.o֘�FQ:\u0002�VG%N�ގ�\u0014\r\\��r�����y�2�\u001e�fY\u0017\u0014�\r�K8�/\u0014�\u0010\u0011\"9�(n��mX�=��#\r<���o��@�\u0002�^j����\">_�_IEb�3Ʉ\u001d��ꍂ�B�mS� \u001cSذ��\u001e\u0006���ҳ\u000f=�\u001e��_M��������I�^�N�ۅbkb�(�\u0010Bq\u00173\u00183[U�@�\n��\u0002���_>��%����N\u0004I�׻7U}d߫��#u'��޸.U}Ҫ�VFe|�O�6�\u001d΂G�\u0007f��рٻC�=l��V��G�X:���4�j\u0004�1C�񼳓���-��C2R\u001d/�e���\b�=1\u0007\u0014*�\u0006��\u0003m���,�5~�t�G�7_�ӭ�N?���/�v�;�\bA\u001e�\u001b���O%\\W�L�\u0002�%\u0006B\u0001jcXf\u0001m�\u001b��ձ�g�9�)F����L!x���/jܪNN\u0005�������˦ p�d_\u001c\u001d�z\u001e�\u0006����|H��'�@'38�5b���ce��L\t�]�\rx\u0001���\u0015�س91w�7J{Y���1\u0002jЖ�����ĩ�=f�~o���MЇ��b\u0011\u0001��\u001c�c���뫈�$�P���\u0019o\b3\u001c�{�Gh*|�C}��u/{�r����NL\u000e�����+x3\u0018:���\n��؜��:4kGG\f+\u0018F����K�8^�\u0007�Ԁwz�c�\u001c�\u0005�Q�J-��L�\b\u0019B+��%���'_��(e����\u001d�o��r\u001e�6�\r�]\u0015w��i=�YD�Bp\u0013�4k���ш�\u0012\u0019{����%��P�C�9�\"\u000e+\u0007��V��\n\u0015''�K��\u0011\u001a��B��gL�7Íèb�o��rR�Z��9��T\u0019��4딮fI�����\u0000H~��\\�(⨀fZl�I�7G\u0015T�Td�$���/h�@��ǖt8=\u001f�%�`�\u001d;�\u0017t\u0005\u0001���\u0017lR�\r�ۚ�ph0bo\u000b\b��q\\壿)�z{\tN/�U{U�Ô��Q)\u0014\f�\u0011���\u001b͗��|ޛu�^j��R�����opF.\u0000��s23��S�ގ�N�����U����CSۣ{㦨�퇅�\u0018p}Lg�kѺ+[nZv^���8c���,J�\u0004\u0012J��\u0018.q�*=[\u001d�\u0006����_^wW�%�}��ʃ�Z\u00174\u001a\u0007@r���A������E\u0002���p�\u0010Ȏ�\u0004h{���xN\r�\u0002\bj�$�q�\u0019��mk\u001b�Ρ|\t�#3��]�\u000f�\u000f\u0015\u0014&�j�\\c\u000e\u0018NT\u0007��eS�fg\t\u0013⬨�\u00036�?#�|�/���\u0002������\u001e]��U����%��\bn�����?\u0001Er�{g���\u0017�\u0010ϓp�5�x���R���T�\u0006Q\u0010,�V0x\"� n��\u0003�\u000eLy���,�}�\u0017P����xE�[�c�s�\u0007~F>-���AW[L��\u0005tA|,�Ҳ�\t�<)�l�\u000b3}e��뱌��v�Y��+��O�[9x|<�8�\u0002��&�\u000f�^�H&��T�ת�Ŭ��_�3~�\u0016����I�����L/h�q�5^\\��=ֶ����E?�C���୉\u0019G� �Z�\u001e3j,[�RTu+��*��H�\u0011\u0017��8��I\u000e��6h����4\u0015^c�g��fk[�\u001f?d{\b�d΢2��>5\n��F�\u000e\u000f6Bm�����\u001b�\u0012���_��\u0016\u0007� Ї$�\u001b\u000e�k徱ϝ���s���g��\u0004\u0001K����\u0014m�\u0014�2�\u0005DX��QZ��\u0017��N9|\rS����&����Q�Oh~\u0001�&�^�\u001f!�y\u0001����\u0002����\u001b\u000f�������摞��\u0003?�>(y�@�L�~-n��\r\u0015_bQ%r!,��N7��c�r{��{�\u0005'�\u001d��7�9d�\u001fJ{�4�=u�)2;������3S4����5j6�+�&����\u001b�C\u0006.��4���T\u000b\b�s\u0001/��ܿ&�Q�\u001c�<��6\tCA,5�}8�j�]�ݮ�\u0003}X�P\u0001ē��v�=Z���k��?��?h-\"~ʠle�_9'9l��Su\u0017c���/�\u0017(��ΧHڷQ��8@��$�ӑ\u001c\u001a�WQ��e@���m���\u001a�)�V\u001d\u000fJ\u001c\u0003M�gM؟���UwP���HM�x5���q�G5�\t\u0002��y��[\u0005n9\u0018\u000es��\u0019\n��4���Rmm���9�b#b��;a\u0019\u0016�\u0001k�ݘv\u001f�,�����q}�nImJ\u0012�\u0005�9lL=Boq��`�X89\"��/�Ր�h�bIrlN\u000b\u00043\r���39*�܂�H\u0016�u\u00121�(�#h�\u0018\u0006���I60���ޘ�\u0005�\u0016�\u0003\u000f%��\"�/w��??�J�%nE�f��V�r�\t<�SWs�a�B��A�t���5k�a�$D\u000e��GZ����θ*\u0014�Z�ý\u0000l<#5\"M��tzr\u000e\u001b[��닖�(<���E�V��Y�}l�|��;S\u000eHS,����\r&e�8({��ʕ��ˇ|�\r\n�^֗\u0018�\u0000E�k�-�Ez?߲��c�G�\u00178��7\u0002�-�\u0018\u0014;e]�~��ú��Z�����=��\u001b�\\\u0016�,K��&���~�\u0010Y�C\u0016�\u001b���u�$\u0004�x¡��!`k��N�\u0010Aࠕ˹\u0017�`��|)�\u0012\u0006QY\u0014�d6\u0013�\u0018�-T?\u0004X++�C\u0000>�\u000e�\u00034�n<%5��\\��\u0017�ǋu\u0016�p�˂ϒabK�hRg2b��l;�j\u0017R9����a�D�����\u000f{\u0013��XB����������h�ZoL�dp3��J���#�\u0017\u0015\u001cn��\u0015.�D��_)��մ�X�2�v5����������z�j5:��0�j�e�-c߯[�\u000f�bۥ\\����\u0005�\u0017\u0006З} ���MYvܟn_9\u001dS\u000b�ڻQ��#<��\u001f�UUz��ZX�omi�?�\f-!o��E�q \u001e.Jd%v\u0011\u001c߅�Ϯ\f,��-\fe0�@c���T��$����ze��Ux����7\u0011�9C�:M\f� 4\u0012�%��T\nTp�\u001d�ʆy!�X�9�\u001ay׻X�N�0���\u0019j_����\u0012�\u0004�8�5B��StU2\u001e-�]<po��\u001c�v��\u000b��Ց�j\u001c\u0014\u0010���`�����\"%�;�\u0018\n�T���\u0002�\u001c���,���<\u0015��/&\u001eb��m3ĥ:܈�\u0015�c̸\u0005��p\u00059N<���#�nˑD����\u0011j�k\u001d�臀r\t���\u0019�������\u0010�<�\u000f���4�~G��GgW�\u0011���w�1��Q���P�\u0019��)\\ˏq����\u0000��YQ��n�q�l6\u0003��\u0017F;P�:��T|:�e��\u0017נ�:��x�d�$�\n�}q\u001ft�jyP���\u000b�땒0L\u001eL�\f�ne��Ϲ�(ǁ8�A�\u0007�D,'\u0015��\b\u001d$\u001c�Ġ\u001c\u0001B��Y�����*�0��9���\"\u0012�\u0012'���\u0014c�\u0006��6�^��urz�a+R&�E�iO{脩��8g�\u0000�縉 \f\u0004����V�\u0005�&5<\u0002ʉ�ɢ+OPi�&�7�<U���[~\u001bI�楂��)떩�\f�����!���\u0017�>\u0016x݇�\\c\fP<J���qWj�\u001b�؟��HΡ�Ry�*$9���n������tA%NFN\u0013��-��x��I�ۉ\u0014\f�&uv�\u001a\u0010��hܹ\u0005\\�[\u0017��w����w�V\u0018%�\u0017�xd��}#3�(�@\u0019no���ge,\"t_`ͱ����\u0010��΀��<0\u0001\u001fҀ�\u000b\u001c�j\u0001�B~\b��3�\u001aǢ��A�bA!\u0014���\u001e�-�]wq^�S��%���9s\u000e�k�7\u0018�d�\u0007���7��\u0014����R\u001e^���^F>r��x\n�\u001b�L ��\u001e��5�ļ\u0018Մ�b��˅��Nj�c(\u0018�;�$�2���\u0005-\fN\u0003y�fg�ʮ!�Q���e�BnS�e����{�O��\u0011�\u0018(V�����\u0016��̗�����\u0004\f��P��\u0016�Vg�?E�,���\u0018cf�q��H+tm`m���\u001b\u0000{�ӺU����X���j�e['A��EZ|��b���)\u001f�~�=\u001e�����\u0010�u�QV�R�\u001905+�lu�H��\u000e~'\u0004��.�#�i���\u001b�Lra���f���a��Q\u0011X��K��g����\u0013Su��V�\u0010\u0007E���\u0017ፁ�\u0019�`�6�������\u0019g\u0013�\u0015I$\u0005\t4o�_�(������\r��<��#���\b\u000f�\u0010\u0004�������3%�\u0002��҈\u0019ϟ\u001dq�\u0019�TIn�\u0003K-�aw�R�~�6d�\u0000����Z�;\u0013\u0014.{�>}���;���~\u0003>��{'����d��\b�\u0017P��f����V4�\u0016\u0003L\u0000���!��\u001ab\u001c\u0007�\u0003\u0019q�b3\u0019������O�j;\u0019�f�\b\u001c9E=�H)�-\t\u0007��YI�!冲`�r\u00034Bg\\`Mc�o�kL&��Z\nl[*���ϖ'ʍ<���\u0012x�H�#������d;�K�����Ĕֿ��4��\u001dh����\f\u001b�0�[w\f�\u0006k���K���]\u0002\u0011~\u0018�>]4�q\\yL�+�\u00171���$\u000eQܼ��рP\\\u000f̧��\u0000\u000b\u00035��ң-\nh��ą��'��C�_��`�\b�nx��Ǉ����\u001e>�L���nd\u001c]qJL5}q\"�#ճ�%��'t\u0018b�C��m{U�:��\t@\u0001A\u0003y���ҥEϩ��I,`?\t2 ���\u0011��\u000b�Gh���\u0018|��{�\\�G\u0002��Kջ��G_\u0011�\u0015\u0015+g�\u0004��7\u00012��d\u001c|���7/N�\u0018drX�u3\u0013p�x#�:�\u000b@��мӌ�z�2�fFf����j\u001a>��Z���\u001d�\u001c\u000f\u001c�)��ѭ\f��b�3���?�Q�m�\u0015�\u001fe\u0003�\u000fk{�M��O\u0011m�m\u0001�t��M����GR�P��Ej(6\"Ha��\u000e�[8�n�\u0004���7_��mx�ຏZ��J��ѕ�\u001b�:\u0012A\u0001,~:Ç��K�+s���\u0011�1\u0011}��r\u0000�\u001aR�~�\u001e�\u001b\u0005IwF^�IŉpSg-j��\u001f#�X����{\u000f�f&Tm\u001c�e��1W���l�.��\u0018i\u0015�� ���1b�\u0015\u0018]d��0�.p�ρ���f�d�\f\u001a=Y�.b\u0012\u001bH\u0019\u001b����$\\�\u0002�~5;�3��fW\u0004��\t�(�=4�\u0015\u001b\u001a�\\�B����s!\u0015��r_=����\u0019�\u0005\rC�\u0017�d�>_�\u0011�*ܨ�)#\u001e�1��[z\f 3-\u0000g�����A��1��.�=dM$���Dx �O�n~�3{�Jg�2���,��@E�}=:���\u0005���п�P�Vև�\u0004�a^(\u000f���e�\u0019%{R-g�p��a�e�\u001al���^�3�n�T�X��@���X6�]ءG\u001b\u000f�m6���x<�gz�\u001f��\u0011!n����\u00143��\u0016~��tɼ\u001cZ���\u0017�Mm+Q�>|V\u0012F���{�;\u0019\u0011L�:ې\u000eYH�&������\\Z�\u001bx\"��뒜\u0017�~Ҿ�~\u001eԓ���\\h��&@�VK�5W��:ƢՖ}M�4q�U[~\u0000\t�C��h�YJ\"�\u00042+<�����t�����C�b`\u001f�\u0012A\u000fd����0\u000e�&�.��-\u001bT�����;q\u0019��#�`�C����V�cL3c��\b��e\u0019�%[�\u0003�Nz\u0016B����#E\\)�o�솯֕y�\u0010\"\f\u000e΋�\fyJk.�a��ܔ�˶X#9��Q��\u0017���<�\u0007!��e��N�%I�\u000b�S�ՙƾ��hz;ӌb��šV���jI.\u0014�î\u0016���~V�\u0018�����ft\u0001��s&/�0�����9�¬@�)p_K���I���,Č��C\tِB~��R!\u0005'�\u0016qR�\u001c]-�^��I��ݎ^\u0014�b[��q�{�2�8���W��\u0002��\\.�:a�+E7�i�ſ1\u0013�?�E��ΆH��=�t�\u001c3�#\u001fvѝ����E֚Q�oj\u001a�5 ���]{�@\u0004����M�-�\u0004\u0007V\rb2^�'1��C.�R�5}���J�W\u0000�UMI<�6)L\u001cw�!�9�VY�aIz�z�\u0003RM�.Az�� �`�\"9QqPb�f�x�W`�\u0004ÍP�\u0000���_�{z1\u001f2���g�ӰC\u0018�\u000el��;|�9Qo\u0015�$NWi���$\u0012AF�h\u001bf��?�⥀��\u0019pt2�p�35Vs����a�\u0003H�p\u0005�Yl8S��@z�\u0017\f!y��0'ՙ�D����\u0016�9,���%��^�Nˉ18~�J�`S�*\u0015�\u0007�V{�\u0004\b\u000b��|��!���G<��t����!���hـ֮�9C�C��f\u00065_���#�V:�?P\u001c\u001d�\u0012K�[�˒�%\u0012\u0016\"�)E���iW���\u000e\u0006�\u0001���[����S����7�V,Ġ^�Be�\n>@&�I�n��:B\u000eU\u001bL�>ic���)$\u000f\u000b��+�b��3\ni�R\r�\u0010\u0003n��l/PJ��-�\u000fL� 2���\u001b�2�&\u0003Ѿ\r\nu�\u0001U�u}��b;sT���Q��:5�޲r�TH�\u0015\u0005H���s�x$�4�Jzޅ�\u001d;��3�}e1y���\u0003\u0001,�l�\u0016\"�yty}��Ǒt��'���f[��n�P{&�arq������]��\u0018��>�\u0016��d�4�\u0000\u0001m�\\(:�uW��~�Q��(A'\u000b�lV\f���(�H�\b�R�Ĩs@a�m�\u0003qr���C�F��ZƸ\u001f&j�E��봰�a5�;�iK\"2��g�h��τҊ\u000fSE�9O´h].kBpHA��Vch\u0011����S�M|�8[;�TA��{M��t�0 \u0017��op襺ZՇa��9�M��\u001d\u001b�'����]���/��M\u001c\u001a���eGL�Xh�I\u0000\u001a�l��6ȗ��㵌�\u001d6�^\u001b_g޸r�=\u0013�\u00053�m5k���vzg��@~$^e����4�?�$�@b3^�֎�+�v!��o�\u001e\"���;#a|�+\u0014�y��W�n��\u0014�\u0013G���WZ�\u0011�en<��-\u0010G�oe\b\u0005�Lf\u000b�5\u0000\u001a,JĜ\b\u0015s�\u0014�\u0018##�x\u0014��Y��a\u000b\u0001��_�;\u0007�,�Y�^Q��\u001b������]�\rU��X�)s�#��;��Xl�\u0001���(���ԧU�b˖'�t��S?m��\u0002[�o�=�\n����*�=\u001d��c��)�G\u0005\u001f�`��\u0015�TV���Լ�~=K.��7��WU�(�V�M�J�$֒�\"�i!���g:Z���$��{䴑�@��4ݤsIy�34\u0016W�7��@\b\u00127 Y�L�΂u-�*8��f^�������q���Oj]&����H�4��ˁ0�j�wϩ���Ȁ��Lm��:7�\u001f��\u0015�ؓ�b2�x;�?�g�`��A�Lf��\u001dip�����ð��!��SV/ph�8^�D��9�\u0010�7O�pC��n\u0002�=���\b׷�m �G\\�Tm��'�1�P�R*\u000fD��H���}�(�U�\u0011\u0010p����YZ��g2���\u0003\u0014\u0006\u001b�\u001e�\u0015q����_���$��<J����\u001b=��I�*�&���4����}-�W��8\u001a�� ��`�◪��>��Z'�������\u001e�n�f�\u0007�c�2wuMO_\u00196\u0011\b���`I5�������\u0014�F/B7!F�3��O3)\u0006v�wG\u0018�Ѡ}�#N����x�О��\u001ep����\u0001Z�E��6Ŀ̶��q����\f��\u0016ӡ�7�_�rI\\�eq��c䝥�+*�����\rʏO�Ƈx�/���g�A�5\u0004GV�~J�\u001cZDX7��ۂ\u0014�\r>�-m\"moa��lǽB�}\u001bSKxMPe�\u001fK��齠��\u001d��\u0019\b\f\u0016j\"��kB�ci��u0���D�X�^�\u001e.\u0013�K��\u0014�C^\b��N=�\n2\b�WC&\rAďP��\u0012S�\u001a>��\u0018=\u0012�\\ҕ���\u001e`��\u001a�\"��'o\u0007y4+�>��/�\tI�1\\�\u0017ↂ�?��)6(�\u00001�8j�#��*�\\\b�u9u��U'�ܒ\u0010�6�3\u0004\tԡ)r��\n�OR�\u0013\\���-U��Pf\u000b�J�2\u0007`����Z`2���\u0015,��c�\u001bX�����=/�g�,3&���E�tEvA\u0010i\u0016�19A��\u0013) �\u0016h���\u0016\u0012�~5�+Oc��>d��O�ݘ�,�6\u0012\u001a\rCė�ؼ{urȲ\u0007�8:�\u001e��4�\u0013�\u001a-�2tcfK��&\u0003��'�� \u0010�\u001e��nf�$v\u001f�n����\\;OL\u0014/��ǰH\b+���^g��R-rC�;\n_\u0010\u0015�������o�ӈ_�U�t%3�b\u0019���Wl<�m���:2�݄\t\u0019⢆�$\u0003��]S��(�=�\u001c�m�Qo2��W|���]r\u001er�H���K�<4T,\u0007n1\u0018��_y\b\u0018\u001bA\u0019h\u0010I���6r�=2�)�\u0001k&��x�j�\u0011vgv/�tgZ\u001c���m���\u0015Z&��u�Ck��\f��\f��B���H�nɊ�k\u001bhBs�l�\"�G�q\u001f\u0012�\\�\u0019�_\u0006�D1�l�����>�\u001f��\u001fܗ�D��R\u000b0�o�j��)��ӄ�/w���X�\u001c���(�A��q��\u0002���m:}�9Y_�r���G�\b�r�y�9�O�q�݀�Fq��C\u0015�b��9\rp'\u0003\u0012�\u0001*��̟\n!�M�\"\u0010J6�&a0���\u0000�_�\u0010\u0015��\u0018��w̺\u001b\u00027b���>�U�,�\u0004��͂bk`�'�M\u001f�\r�\u0018e1!��\u0017�.����mR�Q;�T6��e��\u0011\rd;\u00107w\u0002_g0\u000b#�\u0012�?�֍�\u0006���6։\u001d��7����t���>�[\u0003\u0014�\u000bI�V��&�}:��U�Z�&_�_����9\u0011����0\u001b ' ��nÙ�\u0017�l�Q��]�V�p��u�&��pU�l|�ٷb��4$�\r%�\u0005#m\bŴ�X��\u0018b6Yo�96�\u0003I�}�it|O�M}��ʷK��fQ����BO���.���\u0003N磳��5��~�!�`�ӱ\u0018\u0013�$�ek�\tq�\u0000��]��!���lj�$5$�K����\u0012��Q����KR$�qG��Vf�k��Z$�ԮZ\u0014Y7\u0002ͪ��.Z� m�b9\tU\u001b\u001b�(#�]\u0019\u0018��D� ������\u000e\u001d�,l�\u0006OZ\"�>��r\u0014礚�m��\u001c�@�85W��\"R�f�2�5ga8�\u0011�:\u0006�\u0013и�J|f\u000bq�\\��U���\u000f�79���\u0004u�i�e\u0019��-˜�\u0003������U\u0006X��D�ę�'�r���$V8�GE(\u0019y���63�ɏp��(���&~���\bWEa��A �_�l\u0007��q@o\f����~ܒx�p��cQ�gԋ\u0000z�)�xH�e�:Q�¼����\u0003y^����h)�\fK���\u000b\u0002�~�s\u0000�m߅��%K\u001br���3�\u0016S�=����7';擦�,��\u001a�qS���N\u0003��^m����=��ԏ�0�\u0012�m,d\t�4t\"��>f�q�a��\u0006\u0016�?\u0019�\u0004Б\u0013i箊���Wmb,���!'N�`�a\"��Ôs��\u0012��v�:����\u0014o2�4ĉ���� �:�>aI$��\u001fC�\"�JlTW��\u001a��6�H]��\tY㖭�Y��\u0011\rC�:aR\r��RT���RL���r���5\\~yO\bP���7ti\r�D\u0016�\u001cĞ@���G��ψ�\b�\u000e� r���u�1\b�~Wk;�\u0019�_�q�K��~\u0003�MYJ\u001aޕ�DL&}�ć&��N#y��`���<+߳O�O�2�S�Hm�\u001c��B�%���ys��^�\u0004y�Gx{^a1\u0019�=\u0004�v��\b�\u0016�,���8�j\u0001M��\"�\u0017�N=;�\u0013�\u0016��Rͭ\u0016y�w\f�H��j�Z�����֫�\r��#U�\u001f1\u0003\u0013�U\u0013.���F w�\u000b�,��\u0012\u0012A��^>�:Q\u0011���\u0011pN�x\r�u�5��\u001b�F�e��?!m5�=�rTLh\u0018H�ͣ��p�V�\n>\u0013��kLW�i���\\}#\u001a����Z�`2ļ���}��(C����\bЃףf�ʓ\u0003���[�R�iD��n6�\\=�ۥĮdt�*zC;l�1\u001d�\u001fj��Ⱦ(G\u000f#��\u0001y�SG�o��\n�\u001b\u001bOkT�S˭by�ٷ�\u0010�F*�\u0000�Ā�Pw��\u0004�ϙ\u00126j1�\u00175O\"��^`=H�w��L�n0#t�7z�(�\u001a���\r����\u0012�Y\u000e(�\u001b8r\u001c=��hooЌu�@T\u001a]ք���/�q��#�Dwmjɜb�j�e!�W{���\u001bts��[�/\b\u001ag\u0012�e��\u001b��HJ.�N�U�BK#_�5\u0011�0+���)iO+��������:yt��\u0000�9�#F�&�S���EA�����2��^_1���2�:�,���@u�\u001c\t\u0017Z!�l�T���5�\u001b�\u0011\u0017<�,�r\u00016x��ɯ\u001f� ��9\u00050�z��7�9�\u000f�\\d�\u0010�:$�ދe�`*�).\u0016��BS[\u00178}߉�\u0015��ʲ*f�oQm\u001e�$���`��Q\u0015�\u00043�\u000f�\b��J\u0012��\r7\u001ae�r��\n�P�S�\u0015.\u0006�k����Ě\f��il3���xvbT8�<|��P�m�\\����\u0010ػ\u0016g��*c��\u0017,�%���ב0;�ة\n��'�\u001f#)��8�`�\u0019�Kb�\u00174O�װy�k��Rܺ�D45+\u0014H,\u0004-;��k�֚$�x\u001fo�j�O��\u0013CĆ��R*$d�O\u001eu,v�\u001c�MZ����\u0001�}K\u000e��v=~��w��[�\u0003(�\\�pjbNp�Q�����`56ghS��\u0014����y1�b\u001dJ\u0016G\u0011��'\f�B��tC\u0018�\u0017����!h��:8ޞ#�µ�9�{�[\u0007(k������\u000e\u001dܧ���,��-�\u0015Lǃ�[�n��(U'.=�@\u0011\u001b��J\u00191\u001fQ:Q-�GC��Bܦ�з��\u0011˟m\u000f<�x�Ҩ�w�E~\n�\u0016�&j�~\u0013�A��/M*\u0006�\nPə��8��\r���\u0003zSC��\u0004�'E�Ϣ\u0007&jV]�\b�2a\u0010\u0011\\y�/{�\u0002_@\u0012L8U$�{��\u0007�\u00063�ve�ďj��Yd}nA*6U\u0014���r�vm8(oSc[�D�=�/x׽\u001b�\u001a���n|��K��;��Ch=�f�6+��~\u0002Չ\u0013q`���\u0013�m�&u�\u001a�vEJ?�se�\u0004��1�F]Բa@1S\u001a/�5��Ty=Em��%.up�.ӷ\\\u000b�\t­�\u0011'm~��,�%�XEC9\r�[��R{\u0003��J��΢�)O���+�k{\u000e��L��9Ɗ��3����ݝjv��5�m+��\"Z\u0013�����\u0011ߥr����\u0019�7_��kk�x��\u0003�p��\u001ch\u000f�\u0017���\u001b�@ı�΋��\u001b�C�G4� \u0005�7�2\u001f/^Q��:��\u0011�4P�kug�ՠ�z�\u0014%\u0004�2\u001a�R�����iᘼډ?�0r��y�I\u0001�\t�(�í\u001f*/�ٶqQE�7��r�\u0018�\\�\u000f4�߭^�\u001e\u0001�2���\u001d��X\u000fي\u0015�@�@\b��h|\u00168��L�w�7%gD�\b�ffz�}l�\u0006׶��A\u0018\u00028��U=�C����Jf�\u001c��Y��\t�5�f\u00105;\u0004�+\u0018�©R�GT2\u0019d\u0014^7^�a�L�q�>���|Na�\u001c@ׯT\b�:\u001d\u0014}��:�\u0000\u0010��\n�|�\u0003\u000ef�\f�\u0015�\u0007��NG!��\u0019xʘA�\u0014k��\u0016����h,�[\u0000',�Ô�h(���\u000f6JѬ�h?���V�\bi,�$�\f\u000e �\u001c\u0019q�{�'1N�ԭ\u0019�IV�\t�s�_7�Jf�����/�^.�޾\u0004�\u0017 ףΥ������`i��\u001e�D��Tj�Kw �6\fX�欐$���/\u0001�Q\u0001)7w�g+�E��\u0002�\u0018�Z\u001f\u0015�pR'Ȅ)�v�W'c�=d�\n\u0007jJ$\r\u0011f_\u0007���v\u0003���:y\u00011\u001a���WhvS��\u0010��c�|����jLė�\\[�\n%�w\u0015mH\u0001KZ�f�¯�q~� �FQ���3s�[�H\u00193n���4�\u0005F�L\f��}!P4G;�=1B�{e\r�\u001fk�\u0012ԃ�O��H>ѣ�\u0013@�| �d�﹕ϕ5�4\u001a�J'�zp�B�\u0014\tdԭD1d�˅SZ����Еs���5#\u001d�/\t���:e�����6\u00117\u0015T&��\u0001�����sm]b�%F�\u0015)�o�[uM�W\u0018�����>�\u0007z\u001d\u0011�h7\t�~P��kr\u001d\"�ּ��Y\u0012o;��;>;/�H��\u0013�\u0003���}6y't\u0019:p������F\u0005J�x^Gv�H0�3\u0018\u0006]��~tle�x\u0010�k��\u000b;.��mG�\u00008��\u0012JB��H�LI1���V�d޺���,G��kV\u0017�W��F����Y\u0014[�$ly�,��]\u0019�Z,6\u0016\u0011ڗ�\u0003W�؊y\u0006��%\u0016�2!Φ�!��\u0016I����ō\u0000\u000f��V� �F&B\u0001�\u0014_�q�&\u000f�߳�UO��F`�l�x�H0o��8�|���yj\u001a\u0015t\u0006���\u0018Nj�e�G��&�\r͌��I�Ǣ�~�,\u001d��X�5|C����\u000e�+� �潓\u0000{'��/\u001c^���\u001f\u0007���Ȳ_\u001b�3&\u000b\u0010%so\tRY����P���(�\r�<C���P� s+�<\u001ecb�\u0010��Z_���)�5^[|�I\u000fV�.ϼ��d�b���@���p�#�,���E˓���ơ8�Dzq�He�h�m?�\u0018FG�\u0017{��u�z�(\u0014A�\u0000��x�_$��#y�K�%�����V�Ü���E�^&��\t���\u001eS���\u0011����e$\u0010;P�\u0000Q<�7��4Vv\u000en�\u0004\u000eOy �ɔ��U�c%6\u0014����d�\u001f\u000e�@�A�(�oZ�w\u001dh�\u0007�A�\u001a������̭\u001d�\u0011�C:�Ftt?2]E��I��c\u0006K���\u0004����VO�\u0006��1\u001d��]韤�I\u0004f�}o���\u0012�\u00172\u000f������\u001b�a�:~���������qz�\u0000�ȧ\u000f�p|���\u0007`cRu��t\u000eB\u0017�\u000e��{��X�޵\u000b�i^��C-�U+O#T�΅mt2PFύ�}�b\u0014\u0015�1Ԙi�P�q\u0012\rz�^�b�U�_i���Wn\u0007\u0002ڛ�b=�\u0007�L�\u0006�\u0013\u0015��b7)4/j����^;��$Ҭ�T����\u0015�\u0006��\u0000��L�z�\u0018\u0012&\t7��!K�\b�?/�\f�td�0���b��0��υ���t��\bl&Zzv\f�\u0006M�\u001b��\u0007\u001b�b�\u000bp�;1��*��Q\u001b!����:/\u0007��z�H.����\u000e��!�#\u001fx>$.�ҁa\b~A��%AUV\n\u0003�P�QޕGX�_v\u0002���}����{fS}\u0011�$O�5G��\u000eݺ\u001d\u000bR-q\u001d\u0016H�\u001b7�\u0012z�Q��g�\n>�\u0010�V�\u0004,\u0016,!4_c��.\u00143�\u001c�1U%��g+�cx�\u0011y;XTX�4wL�Hc\u0001q֬��6��\u001b�|!�N��ы�\u0007W?\"�F7�g~ռ\ry�D�%��M�b��\u0002�.�x2��g���~V��q|\u001a\f/�\u0012Ej-�.V\f�\u001d3��Y�c����\"��,��\u0004\u000ft$�\u001biG\u001f�M=7�g��_���œ�l\u0000��\u001a\b/G�G@\u0003`C�:\u001eު)�\u0011��-UV��A����]8\\^��!��qk�\\����}\u0017V_�@9'W���%�X!gPN������M��*\u0004JXȿ��e�1\u001b��#\u0006\n4��|\f�c\u000e ���8YqiJ��Dx\"��\u001e3C+Fkl���7*\u0014嚙��v\u0016�\u001c���4\u001d:���7�?\u001d\u0005i���Z\u001f��\u0014Ԍ?\u001f\"\u001a�����D��z�\u0018��b\u0011\u0005,���\u0006�-t\u001f���ۗ\u0012���\u0011d\\��+\u0013\u0013G\u0002�X��5N\u0019ɡ?�\u0000Q�ȕ\u0007�\t�uT�\u000f�1�6�\b\u0018��k\n8\u001e�t9j�g\u001bb}t`��R���\u0004]j4OŁ�\fnԳ��6��\u001c����j�d\u0005�v�ٜʻ��\u0010m\u001b\u0000�2�S�Y�p�B\b�5�[@�P_��Z�\n\u001c�\bdsS�O~�H�D�\u0000-UL�ӪF\u0002�3���d�u� �MA�8���Rd$=Nl4��\u0014O\u001c?61��:ox$��6^Q\u0001�-b\u0014nEm�0m�h�\u0006\u000ee��7nۙ{��|a �:�կ���k�\t��\u000f~J�T���-5Z\u0016�\u001fź\u001a�5O�OUH�N\\�\u0005ǒ\tar9�[QJ��2�-^��U�Q8Q������n�\u0018p]�jjS\"\u0017��\u0015�\\#\u0014z\u0017|O�\u0017pIŉ�t��p\u0003h�:���Z\u0003�\u000eH�*��K�b�4D����T�Tɾ��\\���\u00048\fg<(nz�\u0013��\u001f5�Ϳ�\u001b��\n�h����*��\t�ۀ��(������_��}����A������~[)<\u0002�\"�ՐB�\u0014�)f�kz<T��N��-͗Xy\f)�φ�2}\u001d\u0019\u0006s4A3粖�1�o7\u001d��ٙh�����玠`��u2��\u0018�0�H4y��/���{�\\\u0002!�\u0017&�uC\n=x\u0000�T�R���\u001f�( @��\u001f�\u0001���o\u0003̙�Ƶ�\u0015!�\u00027ҞE�����p:�\u000f�W*W�d��N�H�︥�b��g�@�zr/�\u0006\u0005 ��J�b!\u0011b\u001b\u001eY!�T��2\u0012&\u0006Bd\u0017�4\u000e�0S��'�\u001a��3t.0�\u00135�o5�J]U�t����et�\foȴfLlG�\u001e��}��s��V�y\u00178\u0007�49Aᑺ\u000eg�\\u��`��\u0006�寝�O\u0012�6��;\u0014�1ѻ�\f�|�P&g\u0015��w\u0002~S\u0000 ܁X~��߬c��y�2��x�C+ה:m�F�j��('\u00012���fd�%�[����[��\u000f��5����߻2�6$�U}i+�&�\u001exߚ��r��\u0012�q��Ur�C��@��i�\u001b���C\u0011W���\u0011�> �&/��^\u0012\u001e��a�9��o\u000e���\"��B\u001d\n\u0015����gל\u0012ay��D\b|݃�\u0007A�F6Zm�p�:��E�\u001cE~ʢykc1<^���\u001e�\u00121ڸ��\u0005iҌ��\"xA����f�\u0000���y�A���/]�M}�\u000bd��mk�h+#�13\n\u0019�^xx3�T���ƄX�\u0012\f=sT�Ϻr>�u�\u001b0kůݚh.\u0004��I�h4\u0010\n�jz֠n�����\u0012�pO8�\u001c�a�\u0013��[�h\u0005��-�N��\u0001�\u0002�\u0016i�}B\u0004�q-M�r\u0006y����_��6\u0007/^�r�m\u0007��Ra25�RY\u001e���da\u0016C\u0011�\u001d��;\u001d�}��\u0015��]\u0004�\u0014�'�+{|jR��1��\u001b��e�\"\u001dxY�e`�\\0&\"�*�Y�\u000f�:��q~3\u000b�\u001b\u0003~\u0006�X��\"��\u0019=nǗ�^��Y5a\u0011E\u0016Ѹ\u001d�Ž��KU�T��ZW�\u0007\u001f�t�ǵ�Y�Jv�\\G��3*��E�7���\tCW�\u0001c�Vb\":\bF��D�ȋ]\u001c��6\u0013\u0013V�C�3��P�<��)��\u0003PSp��E\u0006���\u0000+DW���\u0002�\u0014��\"_r\t�����\u001e+:��Z��ݳ��&�9�\t\u001a2��C��j�b|)�t:\u001e��\u0011�(\bg�}T�r��\u001a&�;��-\u001c�1�^Z�4=91�\u0011�6���b9�J_z����G�%���^ޜؓš&�-�jԆ^Z�eGG�[��\u0014�P\u0013\u0014����$�vsi��P��V�c��\u0015\":���d\u0012�Zu�B���2�hG�\u001c���oȆ�>�\u0019%\u001e��E7�c��7S�\u0012�\u001d��.�*�}���H7��Ƹ�ve���k5\u0016�H&z��E\u001f�=��\u0016���3\tsʻQ{\u0004B���\u001c&�\u000fhr\u00126b^�=S3��ۀ�n�g�%!�q��eJ�\\�\u0000l\u0005_��WC�Z��?�-\u001c�F24�Œ\b\u0000\u000b��\u0005���ƀk�\t��?�H��p���\u000b>�a�x|yE*���{�\\�T��\u0015\bv�\u001d����suDd}�\u001f���<)p`\bd�d��\u001ec\fi���{�w�:�\u0014\u0003�\u000f\\���0f�Y��\u000b�\u001bZp�v\u000e��g��h\u0011�w\u0000Y;�\u0016��n˫*�}��!��id\f�Z.ۃ���p\u0006\u0002V��OUz�5M�������F�r�B�k%���}��'�jAU^�\\��ćQi���\\��H��Ő]�#[\u000f`J}��^]m&���aFʙ�J\u0006��%W�0#�Y�\nd�Np�H�[Ʌ�T��\"��]\r\u0003\u0003S\\g�I���S\rUV6�}2IWp�\u0019�b�H}B\\��/>\u0014����޺�\\K�adͮ,;�B\u001a\u001dm�`O�����L7;��|#�|<�\u0017�\u001d���}�=\u00046� 7u����\u0015E�\u001e�2q\u0018�~\u0007{\u0016\f��\u001e���\u001erK\"��➙���\u0019�!�B�^�׫*�`����)\u001b����R.��tfm.9l�#!�h�\u0012\u0013XɈ�/G��\u00109:�a_C��\u001aD#�\u0003T\u001b�th��\u0001Q���nQJo㛪4�iʛ�\u0000�3\f'U\u000b>ܖ���F�A�\u0013[-\u001b3x\u0019'Cgw�I�\b��5���0`\u0002d{�o\u0003��()�d�p.�\u0006�\nt\u0010����i�\u0011�-��\u000eA���r6\u0004��?E��K\f\u0000����8�\u0002α挒�\u0000�R�\u0015`���Y]�\u0004\u000e��\u0012�iNx�<�*���,\u001d��G�ke�Z\r���{#�K�� p�\u000b�߱�+����T\ba\u001e�\u0012����0q��d����軗���u��\u0007Y\u001d\\v�\u0016\u0004\u000b��';}c�>Ȩ\u0013�!\u00049J�np��\u0003w:��\u0011*�r�\u001fM&��ii<�\u0002\u001e�\u0018ZDXZ�\u0002�\u001e\rV�ԫ,Ԣ,�=��گG��\u0005�\u001f��l\tLp��\u0017f�s(|\tg���z���#��O'�\u0000jsĴ����\u001c\u001e�~f{� �T_�5�\b;N\fٰY�Z���&���z�Ҏ�K<�\u000er�wm��N�m`_g�z\u0018�\u0002�A\u001fr����o�g�[��F�w��\u0011���\b.lOL&�6�\u0017�f�AUea|��L\rR>�3>��j��h�3��j����QK�f������?ຌ�=��>��`\u0014�[p8Q~F���60O���x�$\u0007?\u000b�\u001d�3\u0005L�k^b\u0013�\"�[�[Ei\u000fdl`� �:N���O�\u0000}���Cd�\u00181�yMyUK��a3RZi��~�_���z�S(��)�a~@ł�)�n�/Yd��`\u001b+V�\u0005����\u001f�w\u0018zOVK�a=f8�3�nV�u����hl�\\��lJ'��;�v�c�K\u0016܏�\u000f{�\u0010����j\u001c'朇�2�9A�:�\u0016��T��\fn`��Y�\u0004��O�\u0017�\f�eL߱\n\u001e��ȩcv�\u0005��LGIm8q����\\4�\u0012����\u0000��٬?\u0017,��΄^�\u0019���\"J\u001e��U��T��R��OD���'@\b���\u0006���{�PS�(���\u0019zL�`������?��7\u0019�ܠ\u0013/�50��I\u001e\u000b�h\tF\u0002\u0012�CeS����c�������uH\u0018zT�i)�,�\u0012p'\u001a\u0003�\u0007�d��\n3�������ΪnqP^6L�pz��2�\u000e�.p���c�oC��(�U�\tΈ�q�\u0007V�i�o�P��i�&\u001a�G�~���7����O�=\u0006�D\t/�W\r\u0007\u001cDi�T�yB�����|�)4\u0017\t\u001d��G�\tÌ'sO�,lL��\u0017\f\"�N_�R�U֡�^��\u0014��4D��]�Ȧ�ў�X2\u000b���ί�oR& )�����E�\u0017)��f��\u0007W*b��|�(+�d'6�\"&�\u001c-�\u00029����f�\u0003�;b���\r�\u0007&ov�8��`|����\u001e�f0��6\u001e!W�i��M�\brD\u001c�e�^$lG4P\u0001\\\u000b�8p��dDg�x��+ӏoKC蟞�\u001cFǮ�p��΋\u001f�_.\u001a6�,��V�Q,-�c��\u001b�P��\u0003mH\u0019ZGu_����L�\u0003�Z\u001f�T������%�/�l�:\u000f7S�Q��u���\u0010\u001a~��g�c@)��ڬD\b�\u0005�\u001a\u0011�&N1%��~��\u0007Y=�]�Ι2Dp��J��׈%���\u001d\u0012�1!�Y8�5Z�Rڨ0��gU�'��q�D\u0001�ܰ�g��%����hXq\fn���}H�G�\u001d҆\b\u0018\u0001�@�6��\u001e&�\u001d�rw\u001a�Zp8gh�����~\u0007N\n��\f�<\u000f�l�YR\u001e[\r\u0012��\u0005�(����}�o\u0004���bŘ8\u0019F��a\u001b\u0018\u001b,?�� jT^\u0002�Jd3�Nwxa\u001a\u0015��&Fy�Jiң\u0015z$]�����X�\u0010?aYR�vI�\t�\u0013�E_Y�\\X\u0015�#�g\u0019E�+�R2��\u0003�#g��?�h���U\u0010�\u0000�.�;�k�'0\u0017#� a��c�2d�\u000b�)�%\u00174\u0001\u0012`�\u0004�j�\u000e��\u001bE\u0019\u0019�!��\u0003m��\"'A�\u0006��ȃ����G�8�e,\b��K�zE$�\u001f\u0010g�Tɉ�1rOv\u000e\fǈ\u001a���\u001ee\u001d�G�{�/{��\u0016�z�\"w��޹\u0014�h�+�5\u0012y�!Ro��������Ij\u0006\u00124\u000eH���z�2j��\u0002������R\u0003+\u0005ٟ��a��~���^Elu�Q\u0012=��J���X�UV-%���b՗��\\�8i�\u000fb>�.}@�\u001f\u000b�[��\u0004\u0006&+�L�ApN�ɚl8G\u001c�vh�͍|J̆]\u0012k\u0010�\u001e\f:�t5�0p��Q;���k�*5�\u001a\u001b�.\u0015H��Yaʊ�K�f�F�\u0018�\\���\u0003@&n�\r��\u000f�~Ox�8�ob�\u0004�);����]�\u0011���[�;�<��qh�k�<'�K\u000f��\u001e�*�<�ƾ��c�\n�����T�\u0010,s�\u0005A1\\�=�T�F@�D-��C�<+���r\u000b&5�9e�p�A7S�e�\u00194�L-���*6݆�b\u0007Z�\u001e�J�A�䔆\u001d{�To���#�HM\u0014c�|z4��\u0012\u0017K�\u0003�ceI�J*�Y�R$-8'�ʢ�Rk���\u0001�<���XzT��bߘl�V\u0012����*�ê\u0015h\u0018���c�|w;�u��`ɗCxFYx��\u0018\"�;[�%�ŝD�����\u0003\u001a��U\f�\u0012�S�M��k��UE>c\u0003\u000b����!ȮY�r�6�~��Q\f�H\u0016j[�����n<D�^\u0005\u0005BP?�og�o�aP?\u0011��\u0007��A\u0015J�R�\u001e�ݣ��ֵ���� �R!��\u0015\u000f�����$\u001c\u000f��a��ύ@��\u001d\u0000�\u0016���ޏ���m�]�k��ǒ�˒.�t0��.��8iq����Bm�/dN�|ii���k��ɾyB��.���\u001c��Rz\u0004�\u0007�k�?\u000e��}�q]�\u0006PG�:�3��2\u0017�$@\u0004�d��\u001d)�Əg�,@L�\u0016��x˘}���\u0002�Ҕ���\u0014a�r������]\u001dV��<@\u001d#���F�p�M�K\fP�xr�\u0005C}n���\u0002&Y*\u000e�)���LO�>Qѳ�\t���b>ѭ�աNT�\u0000'\rxM�e\u0013����@0�\u000b˖�K��C�\rF�1\tv�+5�U���\u0012\u000fP�G��@\u001c�+�p\u0016��U��\u0003��\u000eBU\u000b�B!�#��]&묰��?��\u0002���u�K'�\u0010�Α���\u0018{g�)\u0004����\u0012\u001b\u000b\f\u0010��FXN�(\u001b���g��V\t/\u001c�\u0004!v�%]\fZb�p�-_Kp����Ӄ]\u0004D���Z)w4��J\u0001�l�\u0003gҕ\u001a�;�\u0010C�����9{\"X;�|�O\u0002\u0012�\\�\u0012a�Ol�;�\u0011���S�����#gӸv�e�\u001d�\u0013v\u001a\rU� U�W\\\"�QO9)&Q���p��e��w0��;�\u0010����f�\n\u0016�#䍮�/\u0015Ȃ�_\u000b�Z�lp��#�KxOHZ��vUﰳ�r�x8�\u0013lV62�.�G���Qq1@��H<\u0001�\u0007ݓ��)AUPY\u0018��B�z\n��:��^Λ*\b��@\b\u0018�c{��Κ��!�J�q�z\u0005G\u0015�\u001c\u0011�\u0016dn-�u��*ø�7\u001c\u0014\u0003�k&'h\u0000�h�\"�8�W���\u0018O�'w����\u0007��4_<1�}�Lf�뵥\u0011�F�E \u001f�\f\u001a��[��G��LQ��ڤ)%O���\u0006��K\u0015s\u0002.r���\u000e�6��D�F���ǭe,���Qa��ލӥ�a��E�0\u000f��r��\u0007{sX�i\u0017]('�\bS�\u0006a\u0016�^�#o93}O΄O��D4L#t�Q�zB�|)�'���._����O���\u0004�B�П9��B���7����\u0003�pRm}\u0017�٨���e�[R/�\u001d����\r<�^lM����$��g�*�L�ۑI�;J��o�L�\u0019�v��\u001f��~T�柯���w��@\f�#�e�n��h�׽i�\u001a%r\u000e��\u001c�\u0019a��UXnSR�\u0006�����i*����\u0003�`��6p�����\u0002�^�\r\\������Ϳb�B�%\u0000o"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1446222813",
+      "id": "paragraph_1631794667893_1654848878",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-12T09:55:24+0000",
+      "dateFinished": "2022-03-12T09:55:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19726"
+    },
+    {
+      "text": "%md\n\nHowever, we can also look at it directly from your terminal. Issue the command `docker exec -it hey-spark /bin/bash` in a terminal on the machine running the notebook container and navigate to the same folder as above.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>However, we can also look at it directly from your terminal. Issue the command <code>docker exec -it hey-spark /bin/bash</code> in a terminal on the machine running the notebook container and navigate to the same folder as above.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261805_1849360743",
+      "id": "paragraph_1639514412539_1659579788",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19727"
+    },
+    {
+      "text": "%md\nf. Inspect the files. How many and why are there multiple result files?\nThere are two type of result files, crc files and normal files.\nThe crc files seem to be different formatted.",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-13T15:05:43+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>f. Inspect the files. How many and why are there multiple result files?<br />\nThere are two type of result files, crc files and normal files.<br />\nThe crc files seem to be different formatted.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_1719980714",
+      "id": "paragraph_1631794679101_712928786",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "dateStarted": "2022-03-13T15:05:43+0000",
+      "dateFinished": "2022-03-13T15:05:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:19728"
+    },
+    {
+      "text": "%md\ng. (optional/advanced) Complete freedom! Do whatever you want with the Shakespeare data. Do some different word counts, other filters, etc. \n\nIf you want to store another textfile to the file system, make sure to use another name than `wc`. Files are not automatically overwritten. \nYou can also clean up and delete the old directory, for this you can use the command below (for another file: change file name accordingly).",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>g. (optional/advanced) Complete freedom! Do whatever you want with the Shakespeare data. Do some different word counts, other filters, etc.</p>\n<p>If you want to store another textfile to the file system, make sure to use another name than <code>wc</code>. Files are not automatically overwritten.<br />\nYou can also clean up and delete the old directory, for this you can use the command below (for another file: change file name accordingly).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_1659044830",
+      "id": "paragraph_1631794707296_339287076",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19729"
+    },
+    {
+      "text": "%sh\nrm -rf /opt/hadoop/wc",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_36332891",
+      "id": "paragraph_1631794717982_1676534120",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19730"
+    },
+    {
+      "text": "%md\n## Wrap up\n\nIf you have reached this point properly and understood what you observed, you have a solid understanding of Spark and its execution model. \n\nExport your Exercises notebook by clicking `Export this note (zpln)` in the toolbar (do not export it as IPython, because it can mess up the cells) and submit your Zeppelin Notebook to the assignment box on Brightspace. After that, you can do the quiz to check your answers. If you have any questions left after that, do not hesistate and come to the lab sessions to discuss your assignment (or ask your question online in the matrix room).",
+      "user": "anonymous",
+      "dateUpdated": "2022-03-11T11:14:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Wrap up</h2>\n<p>If you have reached this point properly and understood what you observed, you have a solid understanding of Spark and its execution model.</p>\n<p>Export your Exercises notebook by clicking <code>Export this note (zpln)</code> in the toolbar (do not export it as IPython, because it can mess up the cells) and submit your Zeppelin Notebook to the assignment box on Brightspace. After that, you can do the quiz to check your answers. If you have any questions left after that, do not hesistate and come to the lab sessions to discuss your assignment (or ask your question online in the matrix room).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646997261806_1603562640",
+      "id": "20210323-214017_672918386",
+      "dateCreated": "2022-03-11T11:14:21+0000",
+      "status": "READY",
+      "$$hashKey": "object:19731"
+    }
+  ],
+  "name": "A3_Exercises",
+  "id": "2GYVZC1NR",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.9.0",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/A3_Exercises"
+}
